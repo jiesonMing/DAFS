@@ -1,0 +1,48 @@
+<div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+          
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">采购管理</a>
+          <dl class="layui-nav-child">
+            {if condition="($nav == 'purchase_requisition') "}
+                <dd><a href="/purchase_requisition" class="layui-this">请购单</a></dd>
+            {else /}
+                <dd><a href="/purchase_requisition">请购单</a></dd>
+            {/if}
+            <dd><a href="javascript:;">采购单</a></dd>
+            <dd><a href="javascript:;">采购报销单</a></dd>
+          </dl>
+        </li>
+
+        <li class="layui-nav-item">
+          <a href="javascript:;">仓库管理</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">入库</a></dd>
+            <dd><a href="javascript:;">出库</a></dd>
+          </dl>
+        </li>
+
+        <li class="layui-nav-item">
+            <a href="javascript:;">车辆管理</a>
+            <dl class="layui-nav-child">
+                    <dd><a href="javascript:;">车辆维修</a></dd>
+                    <dd><a href="javascript:;">车辆油卡分配</a></dd>
+                    <dd><a href="javascript:;">车辆用油情况</a></dd>
+                    <dd><a href="javascript:;">发电机油卡充值</a></dd>
+                    <dd><a href="javascript:;">发电机用油情况</a></dd>
+            </dl>
+        </li>
+
+        <li class="layui-nav-item">
+            <a href="javascript:;">基础数据</a>
+            <dl class="layui-nav-child">
+                <!-- <dd><a href="javascript:;">xx</a></dd> -->
+
+            </dl>
+        </li>
+
+      </ul>
+    </div>
+  </div>
