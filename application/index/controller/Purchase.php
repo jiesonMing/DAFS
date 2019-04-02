@@ -12,4 +12,16 @@ class Purchase extends Base
     {
         return $this->fetch('purchase/purchase_requisition');
     }
+
+    # 请购单上传数据
+    public function purchase_requisition_add()
+    {
+        return $this->fetch('purchase/purchase_requisition_add');
+    }
+
+    # 请购单数据上传
+    public function purchase_requisition_upload()
+    {
+        return json_encode(["code" => 0, "msg" => '', "count" => '', "data" => []]);
+    }
 }

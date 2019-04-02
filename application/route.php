@@ -17,3 +17,5 @@ use think\Route;
 * 采购管理
 */
 Route::get('purchase_requisition','index/purchase/purchase_requisition');
+Route::get('purchase_operate','index/purchase/purchase_requisition_add');
+Route::post('purchase_operate_upload','index/purchase/purchase_requisition_upload');
