@@ -10,3 +10,15 @@
 // +----------------------------------------------------------------------
 
 // 应用公共文件
+
+function ajaxReturn($code, $msg,  $data=[])
+{
+    header("Content-type:text/html;charset=utf-8");
+    $restult = array(
+        'code'  => $code,
+        'msg'   => $msg,
+        'count' => count($data),
+        'data'  => $data,
+    );
+    echo json_encode($restult);die;
+}

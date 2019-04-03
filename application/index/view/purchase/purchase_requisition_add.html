@@ -9,6 +9,8 @@
         <h3>上传请购单数据</h3>
     </div>
 
+    <blockquote class="layui-elem-quote">只允许上传的文件格式为xls、xlsx、pdf</blockquote>
+
     <div class="layui-upload">
         <button type="button" class="layui-btn layui-btn-normal" id="testList">选择多文件</button> 
         <div class="layui-upload-list">
@@ -40,6 +42,7 @@ layui.use('upload', function(){
     elem: '#testList'
     ,url: '/purchase_operate_upload'
     ,accept: 'file'
+    ,exts: 'xls|xlsx|pdf' //只允许excel、pdf
     ,multiple: true
     ,auto: false
     ,bindAction: '#testListAction'
