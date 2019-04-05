@@ -25,35 +25,98 @@
         <button class="layui-btn" style="float: right;">
             <a href="/purchase_operate"><i class="layui-icon">&#xe608;</i> 创建</a>
         </button>
-          
+           
     </div>
 
-    <table class="layui-hide" id="test"></table>
+    <!-- <table class="layui-table" lay-data="{url:'http://www.dafs.com/purchase_requisition_data', page:true, id:'test'}" lay-filter="test">
+        <thead>
+          <tr>
+            <th lay-data="{field: 'id', width:80, sort: true, fixed: true}">ID</th>
+            <th lay-data="{field: 'purchase_code', width:250}">请购单编号</th>
+            <th lay-data="{field: 'filepath'}">文件路径</th>
+            <th lay-data="{field: 'remarks'}">备注</th>
+            <th lay-data="{field: 'addtime', width:160,sort: true}">创建日期</th>
+            <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}">操作</th>
+          </tr>
+        </thead>
+      </table> -->
+
+      <table id="purchase_requisition_data" lay-filter="purchase_requisition_data"></table>
+
+      <script type="text/html" id="operateBar">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
+      </script>
+
 </div>
 {include file="public/footer"/}
 
 <script>
     layui.use('table', function(){
-      var table = layui.table;
-      
-      table.render({
-        elem: '#test'
-        ,url:'https://www.layui.com/demo/table/user/'
-        ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
-        ,cols: [[
-          {field:'id', width:80, title: 'ID', sort: true}
-          ,{field:'username', title: '拟采购物品名称(车牌)'}
-          ,{field:'sex', width:80, title: '规格',}
-          ,{field:'city', width:80, title: '单位'}
-          ,{field:'sign', title: '数量', width: 80} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
-          ,{field:'experience', title: '单件估价(元)',width:120, sort: true}
-          ,{field:'score', title: '用途'}
-          ,{field:'classify', title: '备注'}
-          ,{field:'wealth', width:137, title: '需求日期', sort: true}
-        ]]
-      });
-    });
+        var table = layui.table;
+        // 请购单数据
+        table.render({
+            elem: '#purchase_requisition_data'
+            ,url: 'http://www.dafs.com/purchase_requisition_data' //数据接口
+            ,page: true //开启分页
+            ,cols: [[ //表头
+            {field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
+            ,{field: 'purchase_code', title: '请购单编号', width:250}
+            ,{field: 'filepath', title: '文件名'}
+            ,{field: 'remarks', title: '备注'} 
+            ,{field: 'addtime', title: '创建日期', width: 177}
+            ,{title: '操作', fixed: 'right', width:178, align:'center', toolbar: '#operateBar'}
+            ]]
+        });
 
+        //监听工具条
+        table.on('tool(purchase_requisition_data)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                layer.open({
+                    type: 2, //类型，解析url
+                    closeBtn: 1, //关闭按钮是否显示 1显示0不显示
+                    title: '', //页面标题
+                    shade: 0.6,  //遮罩透明度
+                    area: ['80%', '70%'],  //弹出层页面比例
+                    content: '/purchase_requisition_items?preId='+data.id //弹出层的url
+                });
+                // layer.msg('ID：'+ data.id + ' 的查看操作');
+            } else if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    obj.del();
+                    layer.close(index);
+                });
+            } else if(obj.event === 'edit'){
+                layer.alert('编辑行：<br>'+ JSON.stringify(data))
+            }
+        });
+      
+        var $ = layui.$, active = {
+            getCheckData: function(){ //获取选中数据
+            var checkStatus = table.checkStatus('idTest')
+            ,data = checkStatus.data;
+            layer.alert(JSON.stringify(data));
+            }
+            ,getCheckLength: function(){ //获取选中数目
+            var checkStatus = table.checkStatus('idTest')
+            ,data = checkStatus.data;
+            layer.msg('选中了：'+ data.length + ' 个');
+            }
+            ,isAll: function(){ //验证是否全选
+            var checkStatus = table.checkStatus('idTest');
+            layer.msg(checkStatus.isAll ? '全选': '未全选')
+            }
+        };
+      
+        $('.demoTable .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+
+<script>
     layui.use('laydate', function(){
         var laydate = layui.laydate;
         
@@ -65,4 +128,4 @@
             elem: '.endTime' //指定元素
         });
     });
-    </script>
+</script>

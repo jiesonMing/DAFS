@@ -1,7 +1,7 @@
 <!-- 公共底部文件 -->
 <div class="layui-footer">
     <!-- 底部固定区域 -->
-    © DAFS - 2019
+    © DAFS - <span id='year'></span>
   </div>
 </div>
 <script src="/static/layui/layui.js" charset="utf-8"></script>
@@ -11,8 +11,10 @@
     var element = layui.element;
     
     });
+    var myDate = new Date();
+    document.getElementById('year').innerHTML = myDate.getFullYear();
 </script>
-<script>
+<!-- <script>
     var _hmt = _hmt || [];
     (function() {
     var hm = document.createElement("script");
@@ -20,6 +22,6 @@
     var s = document.getElementsByTagName("script")[0]; 
     s.parentNode.insertBefore(hm, s);
     })();
-</script>
+</script> -->
 </body>
 </html>

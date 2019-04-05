@@ -2,6 +2,9 @@
 namespace app\index\controller;
 use think\Controller;
 use think\Request;
+use think\Validate;
+use think\Session;
+use think\Db;
 
 class Base extends Controller
 {

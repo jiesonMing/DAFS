@@ -22,3 +22,16 @@ function ajaxReturn($code, $msg,  $data=[])
     );
     echo json_encode($restult);die;
 }
+
+// 去掉字符中的,并且转为数字
+function changeStr($str)
+{
+    return (double)str_replace(',', '', $str);
+}
+
+// 截取两个字符之间的字符串
+function get_between($input, $start, $end) {
+    $substr = substr($input, strlen($start)+strpos($input, $start),(strlen($input) - strpos($input, $end))*(-1));
+    return $substr;
+}
+
