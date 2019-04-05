@@ -21,32 +21,18 @@
             <input type="text" class="layui-input endTime" placeholder="结束时间">
         </div>
         
-
         <button class="layui-btn" style="float: right;">
             <a href="/purchase_operate"><i class="layui-icon">&#xe608;</i> 创建</a>
         </button>
            
     </div>
 
-    <!-- <table class="layui-table" lay-data="{url:'http://www.dafs.com/purchase_requisition_data', page:true, id:'test'}" lay-filter="test">
-        <thead>
-          <tr>
-            <th lay-data="{field: 'id', width:80, sort: true, fixed: true}">ID</th>
-            <th lay-data="{field: 'purchase_code', width:250}">请购单编号</th>
-            <th lay-data="{field: 'filepath'}">文件路径</th>
-            <th lay-data="{field: 'remarks'}">备注</th>
-            <th lay-data="{field: 'addtime', width:160,sort: true}">创建日期</th>
-            <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}">操作</th>
-          </tr>
-        </thead>
-      </table> -->
+    <table id="purchase_requisition_data" lay-filter="purchase_requisition_data"></table>
 
-      <table id="purchase_requisition_data" lay-filter="purchase_requisition_data"></table>
-
-      <script type="text/html" id="operateBar">
+    <script type="text/html" id="operateBar">
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
-      </script>
+    </script>
 
 </div>
 {include file="public/footer"/}
@@ -57,7 +43,7 @@
         // 请购单数据
         table.render({
             elem: '#purchase_requisition_data'
-            ,url: 'http://www.dafs.com/purchase_requisition_data' //数据接口
+            ,url: domain + '/purchase_requisition_data' //数据接口
             ,page: true //开启分页
             ,cols: [[ //表头
             {field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
