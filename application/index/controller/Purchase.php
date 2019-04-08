@@ -21,9 +21,15 @@ class Purchase extends Base
     {
         $this->datas  = $this->req->param(true);
 
-        $where = '';
+        $where = '1 ';
         if (isset($this->datas['search'])) {
-            $where.="concat(purchase_code, filename) like '%{$this->datas['search']}%'";
+            $where.=" and concat(purchase_code, filename) like '%{$this->datas['search']}%'";
+        }
+        if (isset($this->datas['startTime']) && !empty($this->datas['startTime'])) {
+            $where.=" and addtime >=".strtotime($this->datas['startTime']);
+        }
+        if (isset($this->datas['endTime']) && !empty($this->datas['endTime'])) {
+            $where.=" and addtime <=".strtotime($this->datas['endTime']);
         }
         
         $PurchasePre = new PurchasePre();

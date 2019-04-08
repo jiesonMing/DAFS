@@ -20,14 +20,14 @@
         ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         ,cols: [[
           {field:'id', width:80, title: 'ID', sort: true}
-          ,{field:'name', title: '拟采购物品名称(车牌)'}
+          ,{field:'name', title: '拟采购物品名称(车牌)',minWidth:150}
           ,{field:'spec', width:80, title: '规格',}
           ,{field:'unit', width:80, title: '单位'}
           ,{field:'qty', title: '数量', width: 80} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
           ,{field:'price', title: '单件估价(元)',width:120, sort: true}
           ,{field:'amount', title: '预算总价(元)',width:120, sort: true}
-          ,{field:'use', title: '用途'}
-          ,{field:'remarks', title: '备注'}
+          ,{field:'use', title: '用途',minWidth:150}
+          ,{field:'remarks', title: '备注',minWidth:150}
           ,{field:'needtime', width:137, title: '需求日期', sort: true}
         ]]
       });
