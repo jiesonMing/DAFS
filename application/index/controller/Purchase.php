@@ -19,9 +19,17 @@ class Purchase extends Base
     # 请购单主数据
     public function purchase_requisition_data()
     {
+        $this->datas  = $this->req->param(true);
+
+        $where = '';
+        if (isset($this->datas['search'])) {
+            $where.="concat(purchase_code, filename) like '%{$this->datas['search']}%'";
+        }
+        
         $PurchasePre = new PurchasePre();
         $list = $PurchasePre
             ->field('id,purchase_code,filepath,remarks,addtime,filename')
+            ->where($where)
             ->order('id', 'desc')
             ->select();
         foreach ($list as $k => &$v) {
@@ -36,8 +44,21 @@ class Purchase extends Base
     public function purchase_requisition_items()
     {
         $this->datas  = $this->req->param(true);
-        return $this->fetch('purchase/purchase_requisition_item');
-        
+        $PurchasePre = PurchasePre::get($this->datas['preId']);
+        if($PurchasePre->filetype == 2) {
+            // 查看pdf文件
+            header("location:http://{$_SERVER['SERVER_NAME']}{$PurchasePre->filepath}");exit;
+        }
+        $this->assign('preId', $this->datas['preId']);
+        return $this->fetch('purchase/purchase_requisition_item'); 
+    }
+
+    # 请购单items 数据
+    public function purchase_requisition_items_data()
+    {
+        $this->datas  = $this->req->param(true);
+        $data = PurchasePreItem::all(['ppid' => $this->datas['preId']]);
+        return ajaxReturn(0,'success', $data);
     }
 
     # 请购单上传数据

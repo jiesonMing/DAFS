@@ -10,9 +10,9 @@
     </div>
     <div class="demoTable">
         <div class="layui-inline">
-          <input class="layui-input" placeholder="搜索..." name="id" id="demoReload" autocomplete="off" style="width: 240px">
+          <input class="layui-input" placeholder="搜索..." name="search" id="searchValue" autocomplete="off" style="width: 240px">
         </div>
-        <button class="layui-btn" data-type="reload">搜索</button>
+        <button class="layui-btn" data-type="reload" id="search">搜索</button>
 
         <div class="layui-inline" style="padding-left: 20px ">
             <input type="text" class="layui-input startTime" placeholder="开始时间">
@@ -47,10 +47,10 @@
             ,page: true //开启分页
             ,cols: [[ //表头
             {field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
-            ,{field: 'purchase_code', title: '请购单编号', width:250}
-            ,{field: 'filepath', title: '文件名'}
+            ,{field: 'purchase_code', title: '请购单编号', width:200}
+            ,{field: 'filepath', title: '文件名',minWidth:250}
             ,{field: 'remarks', title: '备注'} 
-            ,{field: 'addtime', title: '创建日期', width: 177}
+            ,{field: 'addtime', title: '创建日期', width: 178,minWidth:100}
             ,{title: '操作', fixed: 'right', width:178, align:'center', toolbar: '#operateBar'}
             ]]
         });
@@ -95,9 +95,18 @@
             }
         };
       
-        $('.demoTable .layui-btn').on('click', function(){
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
+        $('.demoTable #search').on('click', function(){
+            // var type = $(this).data('type');
+            // active[type] ? active[type].call(this) : '';
+            var search = $('#searchValue').val();
+            table.reload('purchase_requisition_data', {
+                where: {
+                    search: search
+                }
+                ,page: {
+                    curr: 1
+                }
+            });
         });
     });
 </script>
