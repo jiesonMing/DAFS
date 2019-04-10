@@ -1,19 +1,13 @@
-<!-- 采购请购单 -->
+<!-- 采购报销单 -->
 {include file="public/header"/}
 
 {include file="public/menu"/}
 
 <div class="layui-body" style="padding: 10px;"> 
     <!-- 内容主体区域 -->
-    <div>
-        <span class="layui-breadcrumb">
-            <a href="/">首页</a>
-            <a><cite>请购单</cite></a>
-        </span>
+    <div style="padding-bottom: 10px;">
+        <h3>采购报销单</h3>
     </div>
-
-    <hr class="layui-bg-gray">
-    
     <div class="demoTable">
         <div class="layui-inline">
           <input class="layui-input" placeholder="搜索..." name="search" id="searchValue" autocomplete="off" style="width: 240px">
@@ -28,12 +22,12 @@
         </div>
         
         <button class="layui-btn" style="float: right;">
-            <a href="/purchase_operate"><i class="layui-icon">&#xe608;</i> 创建</a>
+            <a href="javascript:;"><i class="layui-icon">&#xe608;</i> 创建</a>
         </button>
            
     </div>
 
-    <table class="layui-table" id="purchase_requisition_data" lay-filter="purchase_requisition_data"></table>
+    <table class="layui-table" id="purchase_expense_data" lay-filter="purchase_expense_data"></table>
 
     <script type="text/html" id="operateBar">
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看</a>
@@ -49,12 +43,12 @@
         var laydate = layui.laydate;
         // 请购单数据
         table.render({
-            elem: '#purchase_requisition_data'
-            ,url: domain + '/purchase_requisition_data' //数据接口
+            elem: '#purchase_expense_data'
+            ,url: domain + '/purchase_expense_data' //数据接口
             ,page: true //开启分页
             ,cols: [[ //表头
             {field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
-            ,{field: 'purchase_code', title: '请购单编号(单击编辑)', width:200, edit: 'text'}
+            ,{field: 'purchase_code', title: '采购报销单编号', width:200, edit: 'text'}
             ,{field: 'filepath', title: '文件名',minWidth:250}
             ,{field: 'remarks', title: '备注', edit: 'text'} 
             ,{field: 'addtime', title: '创建日期', width: 178,minWidth:100,sort: true}
@@ -64,7 +58,7 @@
 
         // 数据重载
         var tableReload = function(params={}) {
-            table.reload('purchase_requisition_data', {
+            table.reload('purchase_expense_data', {
                 where: params
                 ,page: {
                     curr: 1
@@ -73,7 +67,7 @@
         }
 
         // 查看、删除
-        table.on('tool(purchase_requisition_data)', function(obj){
+        table.on('tool(purchase_expense_data)', function(obj){
             var data = obj.data;
             if(obj.event === 'detail'){
                 layer.open({
@@ -126,7 +120,7 @@
         };
 
         // 编辑
-        table.on('edit(purchase_requisition_data)', function(obj){
+        table.on('edit(purchase_expense_data)', function(obj){
             var value = obj.value //得到修改后的值
             ,data = obj.data //得到所在行所有键值
             ,field = obj.field; //得到字段

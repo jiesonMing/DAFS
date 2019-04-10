@@ -7,13 +7,18 @@
         <li class="layui-nav-item layui-nav-itemed">
           <a class="" href="javascript:;">采购管理</a>
           <dl class="layui-nav-child">
-            {if condition="($nav == 'purchase_requisition' or $nav == 'purchase_requisition_add' or $nav == 'purchase_requisition_items') "}
+            {if condition="($nav == 'purchase_requisition_view' or $nav == 'purchase_requisition_add_view' or $nav == 'purchase_requisition_items_view') "}
                 <dd><a href="/purchase_requisition" class="layui-this">请购单</a></dd>
             {else /}
                 <dd><a href="/purchase_requisition">请购单</a></dd>
             {/if}
             <dd><a href="javascript:;">采购单</a></dd>
-            <dd><a href="javascript:;">采购报销单</a></dd>
+            
+            {if condition="($nav == 'purchase_expense_view' or $nav == 'purchase_expense_add' or $nav == 'purchase_expense_items_view') "}
+                <dd><a href="/purchase_expense" class="layui-this">采购报销单</a></dd>
+            {else /}
+                <dd><a href="/purchase_expense">采购报销单</a></dd>
+            {/if}
           </dl>
         </li>
 

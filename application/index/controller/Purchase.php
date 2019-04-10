@@ -11,7 +11,7 @@ use app\index\model\PurchasePreItem;
 class Purchase extends Base
 {
     # 请购单
-    public function purchase_requisition()
+    public function purchase_requisition_view()
     {
         return $this->fetch('purchase/purchase_requisition');
     }
@@ -47,7 +47,7 @@ class Purchase extends Base
     }
 
     # 请购单items
-    public function purchase_requisition_items()
+    public function purchase_requisition_items_view()
     {
         $this->datas  = $this->req->param(true);
         $PurchasePre = PurchasePre::get($this->datas['preId']);
@@ -71,8 +71,10 @@ class Purchase extends Base
     }
 
     # 请购单上传数据
-    public function purchase_requisition_add()
+    public function purchase_requisition_add_view()
     {
+        $template = "<a href='http://{$_SERVER['SERVER_NAME']}/template/请购单上传模版.xlsx' style='color:#1E9FFF' target='_blank'>请购单模版</a>";
+        $this->assign('template', $template);
         return $this->fetch('purchase/purchase_requisition_add');
     }
 
@@ -206,6 +208,17 @@ class Purchase extends Base
             Db::rollback();
             return ajaxReturn(-1, $e->getMessage());
         }
+    }
+
+    ####################################################################################################################################
+                                                                      # 请购单end
+                                                                      
+                                                                      # 采购报销单start
+    ####################################################################################################################################
+
+    # 采购报销单
+    public function purchase_expense_view(){
+        return $this->fetch('purchase/purchase_expense');
     }
 
 }

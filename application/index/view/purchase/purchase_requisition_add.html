@@ -5,36 +5,112 @@
 
 <div class="layui-body" style="padding: 10px;"> 
     <!-- 内容主体区域 -->
-    <div style="padding-bottom: 10px;">
-        <h3>上传请购单数据</h3>
+    <div>
+        <span class="layui-breadcrumb">
+          <a href="/">首页</a>
+          <a href="/purchase_requisition">请购单</a>
+          <a><cite>创建请购单数据</cite></a>
+        </span>
     </div>
+    <hr class="layui-bg-gray">
+    <div class="layui-tab">
+      <ul class="layui-tab-title">
+        <li class="layui-this">上传数据</li>
+        <li>手动创建数据</li>
+      </ul>
 
-    <blockquote class="layui-elem-quote">只允许上传的文件格式为xls、xlsx、pdf</blockquote>
-
-    <div class="layui-upload">
-        <button type="button" class="layui-btn layui-btn-normal" id="testList">选择多文件</button> 
-        <div class="layui-upload-list">
-            <table class="layui-table">
-            <thead>
-                <tr><th>文件名</th>
-                <th>大小</th>
-                <th>状态</th>
-                <th>操作</th>
-            </tr></thead>
-            <tbody id="demoList"></tbody>
-            </table>
+      <div class="layui-tab-content">
+        <!-- 上传数据 -->
+        <div class="layui-tab-item layui-show">
+          <blockquote class="layui-elem-quote">只允许上传的文件格式为xls、xlsx、pdf。上传模版：{$template}</blockquote>
+          <div class="layui-upload">
+            <button type="button" class="layui-btn layui-btn-normal" id="testList">选择多文件</button> 
+            <div class="layui-upload-list">
+                <table class="layui-table">
+                <thead>
+                    <tr><th>文件名</th>
+                    <th>大小</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr></thead>
+                <tbody id="demoList"></tbody>
+                </table>
+            </div>
+            <button type="button" class="layui-btn" id="testListAction">开始上传</button>
+          </div>
         </div>
-        <button type="button" class="layui-btn" id="testListAction">开始上传</button>
-    </div> 
-          
 
+        <!-- 手动创建数据 -->
+        <div class="layui-tab-item">
+            <form class="layui-form">
+              <div class="layui-form-item">
+                <label class="layui-form-label">请购单编号：</label>
+                <div class="layui-input-block">
+                  <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请购单编号" class="layui-input">
+                </div>
+              </div>
+
+              <div class="layui-form-item">
+                <label class="layui-form-label">请购单数据：</label>
+                <div class="">
+                    <table class="layui-table" style="margin-left:130px;width:82%">
+                      <thead>
+                        <tr>
+                          <th style="width:160px">拟采购物品名称(车牌)</th>
+                          <th style="width:50px">规格</th>
+                          <th style="width:50px">单位</th>
+                          <th style="width:50px">数量</th>
+                          <th style="width:100px">单件估价(元)</th>
+                          <th style="width:100px">预算总价(元)</th>
+                          <th style="width:250px">用途</th>
+                          <th style="width:140px">需求日期</th>
+                          <th>备注</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><input type="text" name="name" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
+                          <td><input type="text" name="spec" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
+                          <td><input type="text" name="unit" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
+                          <td><input type="text" name="qty" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
+                          <td><input type="text" name="price" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
+                          <td><input type="text" name="amount" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
+                          <td><input type="text" name="use" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
+                          <td><input type="text" name="needtime" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
+                          <td><input type="text" name="remarks" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                </div>
+              </div>
+
+
+              <div class="layui-form-item">
+                <label class="layui-form-label">备注：</label>
+                <div class="layui-input-block">
+                  <input type="text" name="remarks" lay-verify="title" autocomplete="off" placeholder="备注" class="layui-input">
+                </div>
+              </div>
+
+              <div class="layui-form-item">
+                <div class="layui-input-block">
+                  <button class="layui-btn" lay-submit="" lay-filter="demo1">确认保存</button>
+                  <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+              </div>
+
+            </form>
+        </div>
+      </div>
+    </div> 
 </div>
 {include file="public/footer"/}
 
 <script>
-layui.use('upload', function(){
+layui.use(['upload','form'], function(){
   var $ = layui.jquery
-  ,upload = layui.upload;
+  ,upload = layui.upload
+  ,form = layui.form;
   
   //多文件列表示例
   var demoListView = $('#demoList')
