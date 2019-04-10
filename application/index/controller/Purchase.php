@@ -21,7 +21,7 @@ class Purchase extends Base
     {
         $this->datas  = $this->req->param(true);
 
-        $where = '1 ';
+        $where = 'isdel = 0';
         if (isset($this->datas['search'])) {
             $where.=" and concat(purchase_code, filename) like '%{$this->datas['search']}%'";
         }
@@ -64,6 +64,9 @@ class Purchase extends Base
     {
         $this->datas  = $this->req->param(true);
         $data = PurchasePreItem::all(['ppid' => $this->datas['preId']]);
+        foreach ($data as $k => &$v) {
+            $v['index']    = $k+1;
+        }
         return ajaxReturn(0,'success', $data);
     }
 
@@ -71,6 +74,44 @@ class Purchase extends Base
     public function purchase_requisition_add()
     {
         return $this->fetch('purchase/purchase_requisition_add');
+    }
+
+    # 编辑请购单数据
+    public function purchase_requisition_edit()
+    {
+        $this->datas  = $this->req->param(true);
+
+        Db::startTrans();
+        try {
+            $PurchasePre = PurchasePre::get($this->datas['pid']);
+            $PurchasePre->purchase_code = isset($this->datas['purchase_code'])?$this->datas['purchase_code']:'';
+            $PurchasePre->remarks       = isset($this->datas['remarks'])?$this->datas['remarks']:'';
+            $PurchasePre->save();
+            Db::commit();
+            return ajaxReturn(0, 'success');
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
+    }
+
+    # 删除请购单数据
+    public function purchase_requisition_del()
+    {
+        $this->datas  = $this->req->param(true);
+
+        Db::startTrans();
+        try {
+            $PurchasePre = PurchasePre::get($this->datas['pid']);
+            $PurchasePre->isdel = 1;
+            $PurchasePre->save();
+            
+            Db::commit();
+            return ajaxReturn(0, 'success');
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
     }
 
     # 请购单数据上传,若文件为pdf,则只需保存文件

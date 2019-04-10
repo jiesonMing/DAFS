@@ -27,7 +27,7 @@
            
     </div>
 
-    <table id="purchase_requisition_data" lay-filter="purchase_requisition_data"></table>
+    <table class="layui-table" id="purchase_requisition_data" lay-filter="purchase_requisition_data"></table>
 
     <script type="text/html" id="operateBar">
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看</a>
@@ -48,15 +48,25 @@
             ,page: true //开启分页
             ,cols: [[ //表头
             {field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
-            ,{field: 'purchase_code', title: '请购单编号', width:200}
+            ,{field: 'purchase_code', title: '请购单编号(单击编辑)', width:200, edit: 'text'}
             ,{field: 'filepath', title: '文件名',minWidth:250}
-            ,{field: 'remarks', title: '备注'} 
-            ,{field: 'addtime', title: '创建日期', width: 178,minWidth:100}
+            ,{field: 'remarks', title: '备注', edit: 'text'} 
+            ,{field: 'addtime', title: '创建日期', width: 178,minWidth:100,sort: true}
             ,{title: '操作', fixed: 'right', width:178, align:'center', toolbar: '#operateBar'}
             ]]
         });
 
-        //监听工具条
+        // 数据重载
+        var tableReload = function(params={}) {
+            table.reload('purchase_requisition_data', {
+                where: params
+                ,page: {
+                    curr: 1
+                }
+            });
+        }
+
+        // 查看、删除
         table.on('tool(purchase_requisition_data)', function(obj){
             var data = obj.data;
             if(obj.event === 'detail'){
@@ -68,17 +78,30 @@
                     area: ['80%', '70%'],  //弹出层页面比例
                     content: '/purchase_requisition_items?preId='+data.id //弹出层的url
                 });
-                // layer.msg('ID：'+ data.id + ' 的查看操作');
             } else if(obj.event === 'del'){
                 layer.confirm('真的删除行么', function(index){
-                    obj.del();
-                    layer.close(index);
+                    $.ajax({
+                        type:'delete',
+                        dataType:'json',
+                        url: domain + '/purchase_requisition_del',
+                        data:{pid:data.id},
+                        success:function(res){
+                            if (res.code == 0) {
+                                obj.del();
+                                layer.msg(res.msg, {icon:1}, function(){
+                                    tableReload();
+                                });
+                            } else {
+                                layer.msg(res.msg, {icon:0});
+                            }
+                            layer.close(index);
+                        }
+                    });
+                    
                 });
-            } else if(obj.event === 'edit'){
-                layer.alert('编辑行：<br>'+ JSON.stringify(data))
             }
         });
-      
+
         var $ = layui.$, active = {
             getCheckData: function(){ //获取选中数据
             var checkStatus = table.checkStatus('idTest')
@@ -95,29 +118,42 @@
             layer.msg(checkStatus.isAll ? '全选': '未全选')
             }
         };
-        var tableReload = function(params) {
-            table.reload('purchase_requisition_data', {
-                where: params
-                ,page: {
-                    curr: 1
+
+        // 编辑
+        table.on('edit(purchase_requisition_data)', function(obj){
+            var value = obj.value //得到修改后的值
+            ,data = obj.data //得到所在行所有键值
+            ,field = obj.field; //得到字段
+            $.ajax({
+                type:'put',
+                dataType:'json',
+                url: domain + '/purchase_requisition_edit',
+                data:{pid:data.id, purchase_code:value, remarks:data.remarks},
+                success:function(res){
+                    if (res.code == 0) {
+                        layer.msg(res.msg, {icon:1}, function(){
+                            tableReload();
+                        });
+                    } else {
+                        layer.msg(res.msg, {icon:0});
+                    }
                 }
             });
-        }
-      
+        });
+
         $('.demoTable #search').on('click', function(){
-            // var type = $(this).data('type');
-            // active[type] ? active[type].call(this) : '';
             var search = $('#searchValue').val();
             tableReload({'search': search});
         });
 
+        // enter
         $("body").keydown(function() {
             if (event.keyCode == "13") {
                 $('.demoTable #search').click();
             }
         });
 
-        //执行一个laydate实例
+        // 时间
         laydate.render({
             elem: '.startTime', //指定元素
             type: 'datetime',

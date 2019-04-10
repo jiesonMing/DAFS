@@ -23,3 +23,5 @@ Route::post('purchase_operate_upload','index/purchase/purchase_requisition_uploa
 // 数据
 Route::get('purchase_requisition_data','index/purchase/purchase_requisition_data');
 Route::get('purchase_requisition_items_data','index/purchase/purchase_requisition_items_data');
+Route::put('purchase_requisition_edit','index/purchase/purchase_requisition_edit');
+Route::delete('purchase_requisition_del','index/purchase/purchase_requisition_del');
