@@ -116,6 +116,25 @@ class Purchase extends Base
         }
     }
 
+    # 编辑请购单items数据
+    public function purchase_requisition_items_edit()
+    {
+        $this->datas  = $this->req->param(true);
+        Db::startTrans();
+        try {
+            $PurchasePreItem = PurchasePreItem::get($this->datas['id']);
+            $newArr = array_keys($this->datas);
+            $data[$newArr[0]] = $this->datas[$newArr[0]];
+            $PurchasePreItem->save($data);
+            
+           Db::commit();
+            return ajaxReturn(0, 'success', $newArr);
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
+    }
+
     # 请购单数据上传,若文件为pdf,则只需保存文件
     public function purchase_requisition_upload()
     {
@@ -208,6 +227,12 @@ class Purchase extends Base
             Db::rollback();
             return ajaxReturn(-1, $e->getMessage());
         }
+    }
+
+    # 采购单
+    public function purchase_view()
+    {
+        return $this->fetch('purchase/purchase');
     }
 
     ####################################################################################################################################

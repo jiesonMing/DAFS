@@ -12,7 +12,12 @@
             {else /}
                 <dd><a href="/purchase_requisition">请购单</a></dd>
             {/if}
-            <dd><a href="javascript:;">采购单</a></dd>
+
+            {if condition="($nav == 'purchase_view') "}
+                <dd><a href="/purchase" class="layui-this">采购单</a></dd>
+            {else /}
+                <dd><a href="/purchase">采购单</a></dd>
+            {/if}
             
             {if condition="($nav == 'purchase_expense_view' or $nav == 'purchase_expense_add' or $nav == 'purchase_expense_items_view') "}
                 <dd><a href="/purchase_expense" class="layui-this">采购报销单</a></dd>

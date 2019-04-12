@@ -46,44 +46,41 @@
               <div class="layui-form-item">
                 <label class="layui-form-label">请购单编号：</label>
                 <div class="layui-input-block">
-                  <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="请购单编号" class="layui-input">
+                  <input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请购单编号" class="layui-input">
                 </div>
               </div>
 
               <div class="layui-form-item">
                 <label class="layui-form-label">请购单数据：</label>
-                <div class="">
-                    <table class="layui-table" style="margin-left:130px;width:82%">
-                      <thead>
-                        <tr>
-                          <th style="width:160px">拟采购物品名称(车牌)</th>
-                          <th style="width:50px">规格</th>
-                          <th style="width:50px">单位</th>
-                          <th style="width:50px">数量</th>
-                          <th style="width:100px">单件估价(元)</th>
-                          <th style="width:100px">预算总价(元)</th>
-                          <th style="width:250px">用途</th>
-                          <th style="width:140px">需求日期</th>
-                          <th>备注</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td><input type="text" name="name" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
-                          <td><input type="text" name="spec" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
-                          <td><input type="text" name="unit" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
-                          <td><input type="text" name="qty" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
-                          <td><input type="text" name="price" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
-                          <td><input type="text" name="amount" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
-                          <td><input type="text" name="use" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
-                          <td><input type="text" name="needtime" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
-                          <td><input type="text" name="remarks" required lay-verify="required" autocomplete="off"  class="layui-input"></td>
-                        </tr>
-                      </tbody>
-                    </table>
+                <div class="" style="margin-left:130px;">
+                    <table class="layui-table" id ="itemsTable" lay-filter="itemsTable"></table>
+                    <script type="text/html" id="operateBar">
+                      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-del"></i>删除</a>
+                  </script>
                 </div>
               </div>
 
+
+              <div class="layui-form-item">
+                  <label class="layui-form-label">申请人：</label>
+                  <div class="layui-input-block">
+                    <input type="text" name="applicant" lay-verify="title" autocomplete="off" placeholder="申请人" class="layui-input">
+                  </div>
+                </div>
+              
+              <div class="layui-form-item">
+                <label class="layui-form-label">项目经理：</label>
+                <div class="layui-input-block">
+                  <input type="text" name="projectmanager" lay-verify="title" autocomplete="off" placeholder="项目经理" class="layui-input">
+                </div>
+              </div>
+                
+              <div class="layui-form-item">
+                <label class="layui-form-label">采购部门执行结果：</label>
+                <div class="layui-input-block">
+                  <input type="text" name="purchasingdepartment" lay-verify="title" autocomplete="off" placeholder="采购部门执行结果" class="layui-input">
+                </div>
+              </div>
 
               <div class="layui-form-item">
                 <label class="layui-form-label">备注：</label>
@@ -107,10 +104,11 @@
 {include file="public/footer"/}
 
 <script>
-layui.use(['upload','form'], function(){
+layui.use(['upload','form','table'], function(){
   var $ = layui.jquery
   ,upload = layui.upload
-  ,form = layui.form;
+  ,form = layui.form
+  ,table = layui.table;
   
   //多文件列表示例
   var demoListView = $('#demoList')
@@ -168,6 +166,43 @@ layui.use(['upload','form'], function(){
       tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
     }
   });
+
+  var emptyData = [
+    {'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','remarks':''}
+  ]
+  // 表格
+  table.render({
+    elem: '#itemsTable'
+    ,cols: [[
+      {field:'name', title: '拟采购物品名称(车牌)',width:200, edit:'text',}
+      ,{field:'spec', width:80, title: '规格', edit:'text'}
+      ,{field:'unit', width:80, title: '单位', edit:'text'}
+      ,{field:'qty', title: '数量', width: 80,totalRow: true, edit:'text'} //minwidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+      ,{field:'price', title: '单件估价(元)',width:150,totalRow: true, edit:'text'}
+      ,{field:'amount', title: '预算总价(元)',width:150,totalRow: true, edit:'text'}
+      ,{field:'use', title: '用途',width:200, edit:'text'}
+      ,{field:'needtime', width:100, title: '需求日期', edit:'text'}
+      ,{field:'remarks', title: '备注', edit:'text',width:'25%'}
+      ,{title: '操作', fixed: 'right', width:80, align:'center', toolbar: '#operateBar'}
+    ]]
+    ,data:emptyData
+  });
+
+  // 监听表格
+  table.on('edit(itemsTable)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+    // console.log(obj.value); //得到修改后的值
+    // console.log(obj.field); //当前编辑的字段名
+    // console.log(obj.data); //所在行的所有相关数据
+    var data = table.cache.itemsTable;
+    if (obj.field == 'name' && obj.value != '') {
+      data.push(emptyData);
+      table.reload('itemsTable',{
+          data : data
+      });
+    }  
+  });
   
 });
+
+
 </script>

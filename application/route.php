@@ -25,7 +25,11 @@ Route::post('purchase_operate_upload','index/purchase/purchase_requisition_uploa
 Route::get('purchase_requisition_data','index/purchase/purchase_requisition_data');
 Route::get('purchase_requisition_items_data','index/purchase/purchase_requisition_items_data');
 Route::put('purchase_requisition_edit','index/purchase/purchase_requisition_edit');
+Route::put('purchase_requisition_items_edit','index/purchase/purchase_requisition_items_edit');
 Route::delete('purchase_requisition_del','index/purchase/purchase_requisition_del');
+
+// 采购单
+Route::get('purchase','index/purchase/purchase_view');
 
 // 采购报销单
 Route::get('purchase_expense','index/purchase/purchase_expense_view');
