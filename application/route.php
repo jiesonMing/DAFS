@@ -22,6 +22,7 @@ Route::get('purchase_requisition_items','index/purchase/purchase_requisition_ite
 Route::get('purchase_operate','index/purchase/purchase_requisition_add_view');
 // 请购单数据
 Route::post('purchase_operate_upload','index/purchase/purchase_requisition_upload');
+Route::post('purchase_requisition_add_data','index/purchase/purchase_requisition_add_data');
 Route::get('purchase_requisition_data','index/purchase/purchase_requisition_data');
 Route::get('purchase_requisition_items_data','index/purchase/purchase_requisition_items_data');
 Route::put('purchase_requisition_edit','index/purchase/purchase_requisition_edit');

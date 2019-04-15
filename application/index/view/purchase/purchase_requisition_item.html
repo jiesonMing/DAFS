@@ -14,14 +14,15 @@
     layui.use('table', function(){
       var table = layui.table;
       var $ = layui.$;
-      
+      var myDate = new Date();
+      var mytime=myDate.toLocaleString();
       table.render({
         elem: '#purchase_requisition_items_data'
         ,url: domain + '/purchase_requisition_items_data?preId='+ {$preId} //数据接口
         ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
         ,totalRow: true
         ,toolbar: true
-        ,title: '请购单数据'
+        ,title: '请购单数据'+mytime
         ,cols: [[
           {field:'index', width:80, title: '序号', sort: true,totalRowText: '合计：'}
           ,{field:'name', title: '拟采购物品名称(车牌)',minWidth:150, edit:'text'}

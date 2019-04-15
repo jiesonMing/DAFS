@@ -42,17 +42,21 @@
 
         <!-- 手动创建数据 -->
         <div class="layui-tab-item">
+            <blockquote class="layui-elem-quote"><i style="color:#ff0000">*</i> 为必填选项。</blockquote>
             <form class="layui-form">
               <div class="layui-form-item">
-                <label class="layui-form-label">请购单编号：</label>
+                <label class="layui-form-label"><i style="color:#ff0000">*</i>请购单编号：</label>
                 <div class="layui-input-block">
-                  <input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请购单编号" class="layui-input">
+                  <input type="text" name="purchase_code" lay-verify="required" autocomplete="off" placeholder="请购单编号" class="layui-input">
                 </div>
               </div>
 
               <div class="layui-form-item">
-                <label class="layui-form-label">请购单数据：</label>
+                <label class="layui-form-label"><i style="color:#ff0000">*</i>请购单数据：</label>
                 <div class="" style="margin-left:130px;">
+                    <button id="addTr" class="layui-btn" style="float: right;">
+                        <i class="layui-icon">&#xe608;</i> 添加一行
+                    </button>
                     <table class="layui-table" id ="itemsTable" lay-filter="itemsTable"></table>
                     <script type="text/html" id="operateBar">
                       <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-del"></i>删除</a>
@@ -76,7 +80,7 @@
               </div>
                 
               <div class="layui-form-item">
-                <label class="layui-form-label">采购部门执行结果：</label>
+                <label class="layui-form-label">采购部门结果：</label>
                 <div class="layui-input-block">
                   <input type="text" name="purchasingdepartment" lay-verify="title" autocomplete="off" placeholder="采购部门执行结果" class="layui-input">
                 </div>
@@ -91,7 +95,7 @@
 
               <div class="layui-form-item">
                 <div class="layui-input-block">
-                  <button class="layui-btn" lay-submit="" lay-filter="demo1">确认保存</button>
+                  <button class="layui-btn" lay-submit="" lay-filter="purchase_requisition_form">确认保存</button>
                   <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                 </div>
               </div>
@@ -104,105 +108,135 @@
 {include file="public/footer"/}
 
 <script>
-layui.use(['upload','form','table'], function(){
-  var $ = layui.jquery
-  ,upload = layui.upload
-  ,form = layui.form
-  ,table = layui.table;
-  
-  //多文件列表示例
-  var demoListView = $('#demoList')
-  ,uploadListIns = upload.render({
-    elem: '#testList'
-    ,url: '/purchase_operate_upload'
-    ,accept: 'file'
-    ,exts: 'xls|xlsx|pdf' //只允许excel、pdf
-    ,multiple: true
-    ,auto: false
-    ,bindAction: '#testListAction'
-    ,choose: function(obj){   
-      var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
-      //读取本地文件
-      obj.preview(function(index, file, result){
-        var tr = $(['<tr id="upload-'+ index +'">'
-          ,'<td>'+ file.name +'</td>'
-          ,'<td>'+ (file.size/1014).toFixed(1) +'kb</td>'
-          ,'<td>等待上传</td>'
-          ,'<td>'
-            ,'<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
-            ,'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
-          ,'</td>'
-        ,'</tr>'].join(''));
-        
-        //单个重传
-        tr.find('.demo-reload').on('click', function(){
-          obj.upload(index, file);
+  layui.use(['upload','form','table'], function(){
+    var $ = layui.jquery
+    ,upload = layui.upload
+    ,form = layui.form
+    ,table = layui.table;
+    
+    //多文件列表示例
+    var demoListView = $('#demoList')
+    ,uploadListIns = upload.render({
+      elem: '#testList'
+      ,url: '/purchase_operate_upload'
+      ,accept: 'file'
+      ,exts: 'xls|xlsx|pdf' //只允许excel、pdf
+      ,multiple: true
+      ,auto: false
+      ,bindAction: '#testListAction'
+      ,choose: function(obj){   
+        var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+        //读取本地文件
+        obj.preview(function(index, file, result){
+          var tr = $(['<tr id="upload-'+ index +'">'
+            ,'<td>'+ file.name +'</td>'
+            ,'<td>'+ (file.size/1014).toFixed(1) +'kb</td>'
+            ,'<td>等待上传</td>'
+            ,'<td>'
+              ,'<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+              ,'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+            ,'</td>'
+          ,'</tr>'].join(''));
+          
+          //单个重传
+          tr.find('.demo-reload').on('click', function(){
+            obj.upload(index, file);
+          });
+          
+          //删除
+          tr.find('.demo-delete').on('click', function(){
+            delete files[index]; //删除对应的文件
+            tr.remove();
+            uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+          });
+          
+          demoListView.append(tr);
         });
-        
-        //删除
-        tr.find('.demo-delete').on('click', function(){
-          delete files[index]; //删除对应的文件
-          tr.remove();
-          uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
-        });
-        
-        demoListView.append(tr);
-      });
-    }
-    ,done: function(res, index, upload){
-      if(res.code == 0){ //上传成功
+      }
+      ,done: function(res, index, upload){
+        if(res.code == 0){ //上传成功
+          var tr = demoListView.find('tr#upload-'+ index)
+          ,tds = tr.children();
+          tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+          tds.eq(3).html(''); //清空操作
+          return delete this.files[index]; //删除文件队列已经上传成功的文件
+        }
+        this.error(index, upload);
+      }
+      ,error: function(index, upload){
         var tr = demoListView.find('tr#upload-'+ index)
         ,tds = tr.children();
-        tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
-        tds.eq(3).html(''); //清空操作
-        return delete this.files[index]; //删除文件队列已经上传成功的文件
+        tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+        tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
       }
-      this.error(index, upload);
-    }
-    ,error: function(index, upload){
-      var tr = demoListView.find('tr#upload-'+ index)
-      ,tds = tr.children();
-      tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
-      tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
-    }
-  });
+    });
 
-  var emptyData = [
-    {'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','remarks':''}
-  ]
-  // 表格
-  table.render({
-    elem: '#itemsTable'
-    ,cols: [[
-      {field:'name', title: '拟采购物品名称(车牌)',width:200, edit:'text',}
-      ,{field:'spec', width:80, title: '规格', edit:'text'}
-      ,{field:'unit', width:80, title: '单位', edit:'text'}
-      ,{field:'qty', title: '数量', width: 80,totalRow: true, edit:'text'} //minwidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
-      ,{field:'price', title: '单件估价(元)',width:150,totalRow: true, edit:'text'}
-      ,{field:'amount', title: '预算总价(元)',width:150,totalRow: true, edit:'text'}
-      ,{field:'use', title: '用途',width:200, edit:'text'}
-      ,{field:'needtime', width:100, title: '需求日期', edit:'text'}
-      ,{field:'remarks', title: '备注', edit:'text',width:'25%'}
-      ,{title: '操作', fixed: 'right', width:80, align:'center', toolbar: '#operateBar'}
-    ]]
-    ,data:emptyData
-  });
+    var emptyData = [
+      {'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','remarks':''}
+    ]
+    // 表格
+    table.render({
+      elem: '#itemsTable'
+      ,cols: [[
+        {field:'name', title: '拟采购物品名称(车牌)',width:200, edit:'text',}
+        ,{field:'spec', width:80, title: '规格', edit:'text'}
+        ,{field:'unit', width:80, title: '单位', edit:'text'}
+        ,{field:'qty', title: '数量', width: 80,totalRow: true, edit:'text'} //minwidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+        ,{field:'price', title: '单件估价(元)',width:150,totalRow: true, edit:'text'}
+        ,{field:'amount', title: '预算总价(元)',width:150,totalRow: true, edit:'text'}
+        ,{field:'use', title: '用途',width:200, edit:'text'}
+        ,{field:'needtime', width:100, title: '需求日期', edit:'text'}
+        ,{field:'remarks', title: '备注', edit:'text',width:'25%'}
+        ,{title: '操作', fixed: 'right', width:80, align:'center', toolbar: '#operateBar'}
+      ]]
+      ,data:emptyData
+    });
 
-  // 监听表格
-  table.on('edit(itemsTable)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
-    // console.log(obj.value); //得到修改后的值
-    // console.log(obj.field); //当前编辑的字段名
-    // console.log(obj.data); //所在行的所有相关数据
-    var data = table.cache.itemsTable;
-    if (obj.field == 'name' && obj.value != '') {
-      data.push(emptyData);
+    //监听提交
+    form.on('submit(purchase_requisition_form)', function(data){
+      var data = data.field;
+      data.itemsData = table.cache.itemsTable;
+
+      console.log(data);
+      // layer.alert(JSON.stringify(data.field), {
+      //   title: '最终的提交信息'
+      // })
+      // return false;
+      $.ajax({
+        type:'post',
+        dataType:'json',
+        data: data,
+        url:'/purchase_requisition_add_data',
+        success:function(res){
+          if (res.code == 0) {
+              layer.msg(res.msg, {icon:1});
+          } else {
+            layer.msg(res.msg, {icon:0});
+          }
+        },error:function(){
+          layer.msg('网络错误，稍后重试！', {icon:0});
+        }
+      });
+      return false;
+    });
+
+    // 添加一行数据
+    $('#addTr').on('click',function(){
+      var data = table.cache.itemsTable;
+      data.push({'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','remarks':''})
       table.reload('itemsTable',{
           data : data
       });
-    }  
+      return false;
+    });
+    
+    // 删除一行
+    table.on('tool(itemsTable)', function(obj){
+        layer.confirm('真的删除行么', function(index){
+          obj.del();
+          layer.close(index);
+        });
+    });
+    
   });
-  
-});
-
-
 </script>

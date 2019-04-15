@@ -78,6 +78,39 @@ class Purchase extends Base
         return $this->fetch('purchase/purchase_requisition_add');
     }
 
+    # 手动新增请购单items数据
+    public function purchase_requisition_add_data()
+    {
+        $this->datas  = $this->req->param(true);
+        $mainData = array(
+            'purchase_code'        => $this->datas['purchase_code'],
+            'applicant'            => $this->datas['applicant'],
+            'projectmanager'       => $this->datas['projectmanager'],
+            'purchasingdepartment' => $this->datas['purchasingdepartment'],
+            'remarks'              => $this->datas['remarks']
+        );
+        
+        $itemsData = $this->datas['itemsData'];
+        foreach ($itemsData as &$v) {
+            if (empty($v)) unset($v);
+        }
+
+        Db::startTrans();
+        try {
+            $PurchasePre = new PurchasePre;
+            $PurchasePre->save($mainData);
+
+            $PurchasePre = PurchasePre::find($PurchasePre->id);
+            $PurchasePre->items()->saveAll($itemsData);
+
+            Db::commit();
+            return ajaxReturn(0, 'success');
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
+    }
+
     # 编辑请购单数据
     public function purchase_requisition_edit()
     {
