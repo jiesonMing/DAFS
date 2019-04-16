@@ -87,7 +87,8 @@ class Purchase extends Base
             'applicant'            => $this->datas['applicant'],
             'projectmanager'       => $this->datas['projectmanager'],
             'purchasingdepartment' => $this->datas['purchasingdepartment'],
-            'remarks'              => $this->datas['remarks']
+            'remarks'              => $this->datas['remarks'],
+            'addtime'              => time()
         );
         
         $itemsData = $this->datas['itemsData'];
