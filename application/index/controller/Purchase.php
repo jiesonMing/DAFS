@@ -83,7 +83,7 @@ class Purchase extends Base
     {
         $this->datas  = $this->req->param(true);
         $mainData = array(
-            'titile'               => $this->datas['titile'],
+            'title'               => $this->datas['title'],
             'purchase_code'        => $this->datas['purchase_code'],
             'applicant'            => $this->datas['applicant'],
             'projectmanager'       => $this->datas['projectmanager'],
