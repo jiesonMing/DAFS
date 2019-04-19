@@ -305,6 +305,7 @@ class Purchase extends Base
             // 总金额
             $amount+=$v['amount'];
         }
+        $chineAmount = convert_2_cn($amount);
 
         if ($count < $total) {
             // 空白行
@@ -325,7 +326,7 @@ class Purchase extends Base
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='40' style='text-align:left;'>预算总金额：  人 民 币 壹 仟 捌 佰 玖 拾 玖 元 整（￥{$amount}）    </td>";
+        $div .= "<td colspan='10' height='40' style='text-align:left;'>预算总金额：  人 民 币 {$chineAmount} 元 整（￥{$amount}）    </td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
