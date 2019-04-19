@@ -20,6 +20,7 @@ use think\Route;
 Route::get('purchase_requisition','index/purchase/purchase_requisition_view');
 Route::get('purchase_requisition_items','index/purchase/purchase_requisition_items_view');
 Route::get('purchase_operate','index/purchase/purchase_requisition_add_view');
+Route::get('purchase_requisition_pdf','index/purchase/purchase_requisition_pdf_view');
 // 请购单数据
 Route::post('purchase_operate_upload','index/purchase/purchase_requisition_upload');
 Route::post('purchase_requisition_add_data','index/purchase/purchase_requisition_add_data');

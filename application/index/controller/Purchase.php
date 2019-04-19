@@ -34,14 +34,14 @@ class Purchase extends Base
         
         $PurchasePre = new PurchasePre();
         $list = $PurchasePre
-            ->field('id,title,purchase_code,filepath,remarks,addtime,filename')
+            ->field('id,title,purchase_code,filepath,remarks,addtime,filename,pdfname,pdfpath')
             ->where($where)
             ->order('id', 'desc')
             ->select();
         foreach ($list as $k => &$v) {
             $v['index']    = $k+1;
             $v['addtime']  = date('Y-m-d H:i:s', $v['addtime']);
-            $v['filepath'] = "<a href='http://{$_SERVER['SERVER_NAME']}{$v['filepath']}' target='_blank'>{$v['filename']}</a>";
+            $v['pdfpath'] = "<a href='http://{$_SERVER['SERVER_NAME']}{$v['pdfpath']}' target='_blank' style='color:#1E9FFF'>{$v['pdfname']}</a>";
         }
         return ajaxReturn(0,'success', $list);
     }
@@ -174,7 +174,9 @@ class Purchase extends Base
     # 请购单数据上传,若文件为pdf,则只需保存文件
     public function purchase_requisition_upload()
     {
-        // \think\Loader::import('export.PHPExcel.PHPExcel');
+        $this->datas  = $this->req->param(true);
+        $pid = isset($this->datas['pid'])?$this->datas['pid']:'';
+
         require_once EXTEND_PATH."export/PHPExcel.php";
         $objPHPExcel = new \PHPExcel();
 
@@ -239,23 +241,37 @@ class Purchase extends Base
             'addtime'       => time(),
         );
 
+        if ($extension == 'pdf') {
+            $mainData['pdfname'] = $filename_old;
+            $mainData['pdfpath'] = $filepath;
+        }
+
         // 把数据插入数据表
         Db::startTrans();
         try {
-            $PurchasePre = new PurchasePre();
-            $PurchasePre->save($mainData);
+            if (!empty($pid)) {
+                $PurchasePre = PurchasePre::get($pid);
+                $PurchasePre->pdfname = $filename_old;
+                $PurchasePre->pdfpath = $filepath;
+                $PurchasePre->save();
+                Db::commit();
+                return ajaxReturn(0, 'success');
+            } else {
+                $PurchasePre = new PurchasePre();
+                $PurchasePre->save($mainData);
 
-            if ($PurchasePre->id) {
-                $PurchasePre = PurchasePre::get($PurchasePre->id);
+                if ($PurchasePre->id) {
+                    $PurchasePre = PurchasePre::get($PurchasePre->id);
 
-                $items = $PurchasePre->items()->saveAll($data);
-            
-                if ($items || empty($data)) {
-                    Db::commit();
-                    return ajaxReturn(0, 'success');
+                    $items = $PurchasePre->items()->saveAll($data);
+                
+                    if ($items || empty($data)) {
+                        Db::commit();
+                        return ajaxReturn(0, 'success');
+                    }
                 }
-
             }
+            
             Db::rollback();
             return ajaxReturn(-1, 'failed');
 
@@ -263,6 +279,14 @@ class Purchase extends Base
             Db::rollback();
             return ajaxReturn(-1, $e->getMessage());
         }
+    }
+
+    # 上次扫描件view
+    public function purchase_requisition_pdf_view()
+    {
+        $this->datas  = $this->req->param(true);
+        $this->assign('pid', $this->datas['preId']);
+        return $this->fetch('purchase/purchase_requisition_pdf');
     }
 
     # 打印数据

@@ -88,7 +88,7 @@
                         success:function(res){
                             if (res.code == 0) {
                                 obj.del();
-                                layer.msg(res.msg, {icon:1}, function(){
+                                layer.msg(res.msg, {icon:1,time:1000}, function(){
                                     tableReload();
                                 });
                             } else {
@@ -131,7 +131,7 @@
                 data:{pid:data.id, purchase_code:value, remarks:data.remarks},
                 success:function(res){
                     if (res.code == 0) {
-                        layer.msg(res.msg, {icon:1}, function(){
+                        layer.msg(res.msg, {icon:1,time:1000}, function(){
                             tableReload();
                         });
                     } else {

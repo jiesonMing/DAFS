@@ -15,33 +15,13 @@
     <hr class="layui-bg-gray">
     <div class="layui-tab">
       <ul class="layui-tab-title">
-        <li class="layui-this">上传数据</li>
-        <li>手动创建数据</li>
+        <li class="layui-this">手动创建数据</li>
+        <li>上传数据</li>
       </ul>
 
       <div class="layui-tab-content">
-        <!-- 上传数据 -->
-        <div class="layui-tab-item layui-show">
-          <blockquote class="layui-elem-quote">只允许上传的文件格式为xls、xlsx、pdf。上传模版：{$template}</blockquote>
-          <div class="layui-upload">
-            <button type="button" class="layui-btn layui-btn-normal" id="testList">选择多文件</button> 
-            <div class="layui-upload-list">
-                <table class="layui-table">
-                <thead>
-                    <tr><th>文件名</th>
-                    <th>大小</th>
-                    <th>状态</th>
-                    <th>操作</th>
-                </tr></thead>
-                <tbody id="demoList"></tbody>
-                </table>
-            </div>
-            <button type="button" class="layui-btn" id="testListAction">开始上传</button>
-          </div>
-        </div>
-
         <!-- 手动创建数据 -->
-        <div class="layui-tab-item">
+        <div class="layui-tab-item layui-show">
             <blockquote class="layui-elem-quote"><i style="color:#ff0000">*</i> 为必填选项。</blockquote>
             <form class="layui-form">
               <div class="layui-form-item">
@@ -109,6 +89,28 @@
 
             </form>
         </div>
+
+        <!-- 上传数据 -->
+        <div class="layui-tab-item">
+          <blockquote class="layui-elem-quote">只允许上传的文件格式为xls、xlsx。上传模版：{$template}</blockquote>
+          <div class="layui-upload">
+            <button type="button" class="layui-btn layui-btn-normal" id="testList">选择多文件</button> 
+            <div class="layui-upload-list">
+                <table class="layui-table">
+                <thead>
+                    <tr><th>文件名</th>
+                    <th>大小</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr></thead>
+                <tbody id="demoList"></tbody>
+                </table>
+            </div>
+            <button type="button" class="layui-btn" id="testListAction">开始上传</button>
+          </div>
+        </div>
+
+        
       </div>
     </div> 
 </div>
@@ -204,11 +206,6 @@
       var data = data.field;
       data.itemsData = table.cache.itemsTable;
 
-      console.log(data);
-      // layer.alert(JSON.stringify(data.field), {
-      //   title: '最终的提交信息'
-      // })
-      // return false;
       $.ajax({
         type:'post',
         dataType:'json',
@@ -216,7 +213,7 @@
         url:'/purchase_requisition_add_data',
         success:function(res){
           if (res.code == 0) {
-              layer.msg(res.msg, {icon:1});
+              layer.msg(res.msg, {icon:1,time:1000});
           } else {
             layer.msg(res.msg, {icon:0});
           }
