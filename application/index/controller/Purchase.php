@@ -321,7 +321,7 @@ class Purchase extends Base
         }
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='85' style='text-align:left;'>备注：</td>";
+        $div .= "<td colspan='10' height='85' style='text-align:left;'>备注：{$preData ->remarks}</td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
