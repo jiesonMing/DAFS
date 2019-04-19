@@ -6,7 +6,7 @@ use app\index\model\PurchasePre;
 use app\index\model\PurchasePreItem;
 
 /*
-* 采购管理
+* 采购管理的采购单
 */
 class Purchase extends Base
 {
@@ -34,7 +34,7 @@ class Purchase extends Base
         
         $PurchasePre = new PurchasePre();
         $list = $PurchasePre
-            ->field('id,purchase_code,filepath,remarks,addtime,filename')
+            ->field('id,title,purchase_code,filepath,remarks,addtime,filename')
             ->where($where)
             ->order('id', 'desc')
             ->select();
@@ -83,6 +83,7 @@ class Purchase extends Base
     {
         $this->datas  = $this->req->param(true);
         $mainData = array(
+            'titile'               => $this->datas['titile'],
             'purchase_code'        => $this->datas['purchase_code'],
             'applicant'            => $this->datas['applicant'],
             'projectmanager'       => $this->datas['projectmanager'],
@@ -120,6 +121,7 @@ class Purchase extends Base
         Db::startTrans();
         try {
             $PurchasePre = PurchasePre::get($this->datas['pid']);
+            $PurchasePre->title         = isset($this->datas['title'])?$this->datas['title']:'';
             $PurchasePre->purchase_code = isset($this->datas['purchase_code'])?$this->datas['purchase_code']:'';
             $PurchasePre->remarks       = isset($this->datas['remarks'])?$this->datas['remarks']:'';
             $PurchasePre->save();
@@ -221,7 +223,7 @@ class Purchase extends Base
                 $data[$k]["amount"]   = changeStr($v[6]); //预算总价，元
                 $data[$k]["use"]      = $v[7]; //用途
                 $data[$k]["needtime"] = $v[8]; //需求日期
-                $data[$k]["remarks"]  = $v[9]; //备注
+                $data[$k]["remarks"]  = isset($v[9])?$v[9]:''; //备注
 
                 $amount+=changeStr($v[6]);
             }
@@ -263,14 +265,221 @@ class Purchase extends Base
         }
     }
 
+    # 打印数据
+    public function print_data($isExport = false)
+    {
+        header("Content-type:text/html;charset=utf-8");
+        vendor('mpdf.mpdf');
+
+        $this->datas  = $this->req->param(true);
+        $preData   = PurchasePre::get($this->datas['preId']);
+        $itemsData = PurchasePreItem::all(['ppid' => $this->datas['preId']]);
+
+        // 组装数据
+        $div = "<div>";
+        $div .= "<h2 style='text-align:center;'>
+        <b style='border-bottom: 1px solid black;padding: 5px;'>{$preData->title}</b> 项目工程 请 购 单</h2>";
+        $div .= "<table border='1' width='800' style='border-collapse: collapse; text-align:center'>";
+        $div .= "<tr>";
+        $div .= "<td width='40' height='60'>序号</td><td width='150'>拟采购物品名称</td><td width='100'>规格</td>
+        <td width='100'>单位</td><td width='80'>数量</td><td width='100'>单件估价(元)</td>
+        <td width='100'>预算总价(元)</td><td width='220'>用途</td><td width='100'>需求日期</td><td width='200'>备注</td>";
+        $div .= "</tr>";
+
+        $amount = 0;$total = 15;$count = count($itemsData);
+        foreach ($itemsData as $k => $v) {
+            $k++;
+            $div .= "<tr>";
+            $div .= "<td height='60'>{$k}</td>";
+            $div .= "<td>{$v['name']}</td>";
+            $div .= "<td>{$v['spec']}</td>";
+            $div .= "<td>{$v['unit']}</td>";
+            $div .= "<td>{$v['qty']}</td>";
+            $div .= "<td>{$v['price']}</td>";
+            $div .= "<td>{$v['amount']}</td>";
+            $div .= "<td>{$v['use']}</td>";
+            $div .= "<td>{$v['needtime']}</td>";
+            $div .= "<td>{$v['remarks']}</td>";
+            $div .= "</tr>";
+
+            // 总金额
+            $amount+=$v['amount'];
+        }
+
+        if ($count < $total) {
+            // 空白行
+            for ($i=0; $i<($total - $count); $i++) {
+                $div .= "<tr><td height='60'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+            }
+        }
+        
+
+        // 占位符
+        $nbsp = '&nbsp;';
+        for ($i=0; $i<70; $i++ ) {
+            $nbsp .= '&nbsp;';
+        }
+
+        $div .= "<tr>";
+        $div .= "<td colspan='10' height='85' style='text-align:left;'>备注：</td>";
+        $div .= "</tr>";
+
+        $div .= "<tr>";
+        $div .= "<td colspan='10' height='40' style='text-align:left;'>预算总金额：  人 民 币 壹 仟 捌 佰 玖 拾 玖 元 整（￥{$amount}）    </td>";
+        $div .= "</tr>";
+
+        $div .= "<tr>";
+        $div .= "<td colspan='10' height='80' style='text-align:left;'>
+        <p style='position:absolute;top:1'>申请人：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
+        </td>";
+        $div .= "</tr>";
+
+        $div .= "<tr>";
+        $div .= "<td colspan='10' height='80' style='text-align:left;'>
+        <p style='position:absolute;top:1'>项目经理审批：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
+        </td>";
+        $div .= "</tr>";
+
+        $div .= "<tr>";
+        $div .= "<td colspan='10' height='80' style='text-align:left;'>
+        <p style='position:absolute;top:1'>采购部门执行结果：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
+        </td>";
+        $div .= "</tr>";
+
+
+        $div .= "</table>";
+        $div .= "</div>";
+
+        if ($isExport) {
+            return $div;exit;
+        }
+
+        $filename = '';
+        $mpdf = new \mPDF('zh-CN','A4','','', 5,5,5,5);
+
+        // $mpdf->SetHTMLHeader("
+        // <divstyle='margin-top:10px;'>
+        // <h2 style='text-align:center;'><b style='border-bottom: 1px solid black;padding: 5px;'>{$preData->title}</b> 项目工程 请 购 单</h2>
+        // </div>");
+
+        $mpdf->WriteHTML($div);
+        $mpdf->Output(ROOT_PATH."/public/template/purchase_pre.pdf");
+
+        header("location:http://{$_SERVER['SERVER_NAME']}/template/purchase_pre.pdf");exit;
+    }
+
+    # 导出数据
+    public function export_data()
+    {
+        $this->datas  = $this->req->param(true);
+        $preData   = PurchasePre::get($this->datas['preId']);
+
+        $isExport = true;
+        $content = $this->print_data($isExport); // 获取table数据然后把html转为xls
+
+        $filetime = $preData->title.' 项目工程 请 购 单';
+        $path = $_SERVER['DOCUMENT_ROOT'] . "/uploads/";
+        $fp = @fopen($path . ".html", "wb");
+        @fwrite($fp, $content);
+        unset($htmlinfo);
+        @fclose($fp);
+        rename($path . ".html", $path . ".xls");
+
+        $file = fopen($path . ".xls", "r");
+        header("Content-Type: application/octet-stream");
+        header("Accept-Ranges: bytes");
+        header("Accept-Length: " . filesize($path . ".xls"));
+        header("Content-Disposition: attachment; filename=" . $filetime . ".xls");
+        echo fread($file, filesize($path . ".xls"));
+        fclose($file);
+        @unlink($path . ".xls");
+        exit;
+    }
+
+    ####################################################################################################################################
+                                                                      # 请购单end
+                                                                      
+                                                                      # 采购单start
+    ####################################################################################################################################
+
     # 采购单
     public function purchase_view()
     {
         return $this->fetch('purchase/purchase');
     }
 
+    # 采购单创建数据
+    public function purchase_add_view()
+    {
+        $template = "<a href='http://{$_SERVER['SERVER_NAME']}/template/采购单上传模版.xlsx' style='color:#1E9FFF' target='_blank'>采购单模版</a>";
+        $this->assign('template', $template);
+        return $this->fetch('purchase/purchase_add');
+    }
+
+    # 采购单上传数据
+    public function purchase_add_upload()
+    {
+        require_once EXTEND_PATH."export/PHPExcel.php";
+        $objPHPExcel = new \PHPExcel();
+
+        // 获取表单上传文件
+        $file = request()->file('file');
+        $info = $file->validate(['ext' => 'xlsx,xls'])->move(ROOT_PATH . 'public' . DS . 'uploads');
+
+        // 数据为空返回错误
+        if( empty($info) ){
+            return ajaxReturn(-1, '导入数据失败');
+        }
+
+        // 获取文件名
+        $exclePath = $info->getSaveName();
+        // 上传文件的地址
+        $filename = ROOT_PATH . 'public' . DS . 'uploads'. DS . $exclePath;
+
+        $extension = strtolower( pathinfo($filename, PATHINFO_EXTENSION) );
+
+        $data = $mainData = [];$amount = 0;
+
+        if ($extension =='xlsx') {
+            $objReader = new \PHPExcel_Reader_Excel2007();
+            $objExcel = $objReader ->load($filename);
+        } else if ($extension =='xls') {
+            $objReader = new \PHPExcel_Reader_Excel5();
+            $objExcel = $objReader->load($filename);
+        }
+
+        $sheet = $objExcel->getsheet(0); // 第一个sheet
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        $highestColumm = $sheet->getHighestColumn(); // 取得总列数
+
+        $dataset=array();
+        for ($row = 1; $row <= $highestRow; $row++){//行数是以第1行开始
+            for ($column = 'A'; $column <= $highestColumm; $column++) {//列数是以A列开始
+                $dataset[$row][] = $sheet->getCell($column.$row)->getValue();
+                // echo $column.$row.":".$sheet->getCell($column.$row)->getValue()."<br />";
+            }
+        }
+
+
+        $excel_array = $sheet->toArray(null,true,true,true);   //转换为数组格式
+        $cellsArr = $sheet->getMergeCells();
+
+        $cellsArrData = [];
+        foreach ($cellsArr as $v) {
+            $cellsArrData[] = $sheet->rangeToArray($v);
+        }
+        array_shift($excel_array);  //删除第一个数组(标题);
+        array_shift($excel_array);  //删除th
+
+
+        return ajaxReturn(0, 'success', $dataset);
+
+        $filepath = DS . 'uploads'. DS . $exclePath;
+    }
+
+
     ####################################################################################################################################
-                                                                      # 请购单end
+                                                                      # 采购单end
                                                                       
                                                                       # 采购报销单start
     ####################################################################################################################################

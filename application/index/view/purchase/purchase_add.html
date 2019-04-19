@@ -1,3 +1,4 @@
+<!-- 采购单创建 -->
 <!-- 采购请购单创建数据 -->
 {include file="public/header"/}
 
@@ -8,8 +9,8 @@
     <div>
         <span class="layui-breadcrumb">
           <a href="/">首页</a>
-          <a href="/purchase_requisition">请购单</a>
-          <a><cite>创建请购单数据</cite></a>
+          <a href="/purchase">采购单</a>
+          <a><cite>创建采购单数据</cite></a>
         </span>
     </div>
     <hr class="layui-bg-gray">
@@ -22,7 +23,7 @@
       <div class="layui-tab-content">
         <!-- 上传数据 -->
         <div class="layui-tab-item layui-show">
-          <blockquote class="layui-elem-quote">只允许上传的文件格式为xls、xlsx、pdf。上传模版：{$template}</blockquote>
+          <blockquote class="layui-elem-quote">只允许上传的文件格式为xls、xlsx。上传模版：{$template}</blockquote>
           <div class="layui-upload">
             <button type="button" class="layui-btn layui-btn-normal" id="testList">选择多文件</button> 
             <div class="layui-upload-list">
@@ -44,13 +45,6 @@
         <div class="layui-tab-item">
             <blockquote class="layui-elem-quote"><i style="color:#ff0000">*</i> 为必填选项。</blockquote>
             <form class="layui-form">
-              <div class="layui-form-item">
-                <label class="layui-form-label"><i style="color:#ff0000">*</i>请购单标题：</label>
-                <div class="layui-input-block">
-                  <input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请购单标题" class="layui-input">
-                </div>
-              </div>
-
               <div class="layui-form-item">
                 <label class="layui-form-label"><i style="color:#ff0000">*</i>请购单编号：</label>
                 <div class="layui-input-block">
@@ -125,9 +119,9 @@
     var demoListView = $('#demoList')
     ,uploadListIns = upload.render({
       elem: '#testList'
-      ,url: '/purchase_operate_upload'
+      ,url: '/purchase_add_upload'
       ,accept: 'file'
-      ,exts: 'xls|xlsx|pdf' //只允许excel、pdf
+      ,exts: 'xls|xlsx' //只允许excel、pdf
       ,multiple: true
       ,auto: false
       ,bindAction: '#testListAction'

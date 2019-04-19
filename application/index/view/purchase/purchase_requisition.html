@@ -34,6 +34,7 @@
     </div>
 
     <table class="layui-table" id="purchase_requisition_data" lay-filter="purchase_requisition_data"></table>
+    <h6 style="color:#FF5722">注：查看数据内容可编辑、导出、打印。</h6>
 
     <script type="text/html" id="operateBar">
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看</a>
@@ -54,9 +55,10 @@
             ,page: true //开启分页
             ,cols: [[ //表头
             {field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
-            ,{field: 'purchase_code', title: '请购单编号(单击编辑)', width:200, edit: 'text'}
-            ,{field: 'filepath', title: '文件名',minWidth:250}
-            ,{field: 'remarks', title: '备注', edit: 'text'} 
+            ,{field:  'title', title: '标题(可编辑)', width:150, edit: 'text'}
+            ,{field: 'purchase_code', title: '请购单编号(可编辑)', width:200, edit: 'text'}
+            ,{field: 'filepath', title: '原文件名',minWidth:250}
+            ,{field: 'remarks', title: '备注(可编辑)', edit: 'text'} 
             ,{field: 'addtime', title: '创建日期', width: 178,minWidth:100,sort: true}
             ,{title: '操作', fixed: 'right', width:178, align:'center', toolbar: '#operateBar'}
             ]]
@@ -134,7 +136,7 @@
                 type:'put',
                 dataType:'json',
                 url: domain + '/purchase_requisition_edit',
-                data:{pid:data.id, purchase_code:value, remarks:data.remarks},
+                data:{pid:data.id, purchase_code:value, remarks:data.remarks,title:data.title},
                 success:function(res){
                     if (res.code == 0) {
                         layer.msg(res.msg, {icon:1}, function(){

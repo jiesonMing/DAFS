@@ -13,7 +13,7 @@
                 <dd><a href="/purchase_requisition">请购单</a></dd>
             {/if}
 
-            {if condition="($nav == 'purchase_view') "}
+            {if condition="($nav == 'purchase_view' or $nav == 'purchase_add_view') "}
                 <dd><a href="/purchase" class="layui-this">采购单</a></dd>
             {else /}
                 <dd><a href="/purchase">采购单</a></dd>
