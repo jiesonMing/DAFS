@@ -363,7 +363,7 @@ class Purchase extends Base
         // </div>");
 
         $mpdf->WriteHTML($div);
-        $mpdf->Output(ROOT_PATH."/public/template/purchase_pre.pdf");
+        $mpdf->Output(ROOT_PATH."public/template/purchase_pre.pdf");
 
         header("location:http://{$_SERVER['SERVER_NAME']}/template/purchase_pre.pdf");exit;
     }
