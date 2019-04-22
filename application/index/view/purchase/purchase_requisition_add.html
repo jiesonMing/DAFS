@@ -183,6 +183,7 @@
     var emptyData = [
       {'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','remarks':''}
     ]
+
     // 表格
     table.render({
       elem: '#itemsTable'
@@ -203,11 +204,17 @@
       ,data:emptyData
     });
 
+    var itemsTableData = JSON.parse(window.localStorage.getItem('itemsTableData'));
+    if(itemsTableData!=null){
+      table.reload('itemsTable',{
+          data : itemsTableData
+      });
+    }
+
     //监听提交
     form.on('submit(purchase_requisition_form)', function(data){
       var data = data.field;
       data.itemsData = table.cache.itemsTable;
-
       $.ajax({
         type:'post',
         dataType:'json',
@@ -216,6 +223,7 @@
         success:function(res){
           if (res.code == 0) {
               layer.msg(res.msg, {icon:1,time:1000});
+              window.localStorage.setItem('itemsTableData', null);
           } else {
             layer.msg(res.msg, {icon:0});
           }
@@ -235,13 +243,23 @@
       });
       return false;
     });
+
+    // 把输入的数据缓存
+    table.on('edit(itemsTable)', function(obj){
+      var data = JSON.stringify(table.cache.itemsTable);
+      window.localStorage.setItem('itemsTableData', data);
+    });
     
     // 删除一行
     table.on('tool(itemsTable)', function(obj){
         layer.confirm('真的删除行么', function(index){
           obj.del();
           layer.close(index);
+
+          var data = JSON.stringify(table.cache.itemsTable);
+          window.localStorage.setItem('itemsTableData', data);
         });
+
     });
     
   });
