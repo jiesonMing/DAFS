@@ -141,8 +141,11 @@ class Purchase extends Base
         Db::startTrans();
         try {
             $PurchasePre = PurchasePre::get($this->datas['pid']);
-            $PurchasePre->isdel = 1;
-            $PurchasePre->save();
+            $PurchasePre->delete();
+            $PurchasePre->items()->delete();
+            // $PurchasePre->together('items')->delete();
+            //$PurchasePre->isdel = 1;
+            //$PurchasePre->save();
             
             Db::commit();
             return ajaxReturn(0, 'success');
@@ -150,6 +153,25 @@ class Purchase extends Base
             Db::rollback();
             return ajaxReturn(-1, $e->getMessage());
         }
+    }
+
+    # 编辑请购单数据的时候新增一条数据
+    public function purchase_requisition_items_add_data()
+    {
+        $this->datas  = $this->req->param(true);
+        $items = new PurchasePreItem;
+        $items->data(['ppid' => $this->datas['preId']]);
+        $items->save();
+        return ajaxReturn(0, 'success');
+    }
+
+    # 编辑请购单数据的时候删除一条数据
+    public function purchase_requisition_items_del_data()
+    {
+        $this->datas  = $this->req->param(true);
+        $items = PurchasePreItem::get($this->datas['id']);
+        $items->delete();
+        return ajaxReturn(0, 'success');
     }
 
     # 编辑请购单items数据
@@ -281,7 +303,7 @@ class Purchase extends Base
         }
     }
 
-    # 上次扫描件view
+    # 上传扫描件view
     public function purchase_requisition_pdf_view()
     {
         $this->datas  = $this->req->param(true);

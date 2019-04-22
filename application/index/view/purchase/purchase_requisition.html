@@ -56,11 +56,11 @@
             ,page: true //开启分页
             ,cols: [[ //表头
             {field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
-            ,{field:  'title', title: '标题(可编辑)', width:150, edit: 'text'}
-            ,{field: 'purchase_code', title: '请购单编号(可编辑)', width:200, edit: 'text'}
+            ,{field:  'title', title: '标题(可编辑)', width:190, edit: 'text'}
+            ,{field: 'purchase_code', title: '请购单编号(可编辑)', width:160, edit: 'text'}
             // ,{field: 'filepath', title: '原文件名',minWidth:250}
-            ,{field: 'pdfpath', title: '扫描件',minWidth:250}
-            ,{field: 'remarks', title: '备注(可编辑)', edit: 'text'} 
+            ,{field: 'pdfpath', title: '扫描件',minWidth:200}
+            ,{field: 'remarks', title: '备注(可编辑)', edit: 'text', minWidth:150} 
             ,{field: 'addtime', title: '创建日期', width: 178,minWidth:100,sort: true}
             ,{title: '操作', fixed: 'right', width:250, align:'center', toolbar: '#operateBar'}
             ]]
@@ -85,7 +85,7 @@
                     closeBtn: 1, //关闭按钮是否显示 1显示0不显示
                     title: '', //页面标题
                     shade: 0.6,  //遮罩透明度
-                    area: ['80%', '70%'],  //弹出层页面比例
+                    area: ['85%', '75%'],  //弹出层页面比例
                     content: '/purchase_requisition_items?preId='+data.id //弹出层的url
                 });
             } else if(obj.event === 'del'){

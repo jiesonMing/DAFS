@@ -12,10 +12,16 @@
         <div style="float:right;">
             <i class="layui-icon layui-icon-export" id="export" title="导出" style="font-size: 30px; color: #009688;padding: 0 5px 0 5px;cursor: pointer;"></i>  
         </div>
+        <div style="float:right;">
+            <i class="layui-icon layui-icon-add-1" id="addNew" title="添加一行" style="font-size: 30px; color: #009688;padding: 0 5px 0 5px;cursor: pointer;"></i>  
+        </div>
         
     </div>
     <table class="layui-hide" id="purchase_requisition_items_data" lay-filter="purchase_requisition_items_data"></table>
     <h6 style="color:#FF5722">注：点击数据即可编辑。</h6>
+    <script type="text/html" id="barDemo">
+        <i class="layui-icon layui-icon-close-fill" lay-event="del" id="delItem" title="删除" style="font-size: 30px; color: #FF5722;padding: 0 5px 0 5px;cursor: pointer;"></i>  
+    </script>
 </div>
 
 <script>
@@ -34,7 +40,8 @@
             ,cols: [
 
                 [
-                    {field:'index', width:80, title: '序号', sort: true,totalRowText: '合计：'}
+                    {fixed: 'left', title:'操作', toolbar: '#barDemo', width:70}
+                    ,{field:'index', width:80, title: '序号', sort: true,totalRowText: '合计：'}
                     ,{field:'name', title: '拟采购物品名称(车牌)',minWidth:150, edit:'text'}
                     ,{field:'spec', width:80, title: '规格', edit:'text'}
                     ,{field:'unit', width:80, title: '单位', edit:'text'}
@@ -92,6 +99,48 @@
         // 导出
         $("#export").click(function(){
             window.location.href = "/purchase_export_data?preId="+ {$preId};
+        });
+
+        // 添加一行数据
+        $("#addNew").click(function(){
+            var data = table.cache.purchase_requisition_items_data
+            data.push({'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','remarks':''});
+            var preId = {$preId};
+            $.ajax({
+                type:'post',
+                dataType:'json',
+                url: domain + '/purchase_requisition_items_add_data',
+                data:{preId:preId},
+                success:function(res){
+                    if (res.code == 0) {
+                        table.reload('purchase_requisition_items_data',{
+                            data : data
+                        });
+                    }
+                }
+            });
+        });
+
+        // // 删除
+        table.on('tool(purchase_requisition_items_data)', function(obj){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+                $.ajax({
+                    type:'delete',
+                    dataType:'json',
+                    url: domain + '/purchase_requisition_items_del_data',
+                    data:{id:obj.data.id},
+                    success:function(res){
+                        if (res.code == 0) {
+                            table.reload('purchase_requisition_items_data',{
+                                data : {}
+                            });
+                        }
+                    }
+                });
+            });
+
         });
 
     });

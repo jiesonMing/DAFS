@@ -27,6 +27,8 @@ Route::post('purchase_requisition_add_data','index/purchase/purchase_requisition
 Route::get('purchase_requisition_data','index/purchase/purchase_requisition_data');
 Route::get('purchase_requisition_items_data','index/purchase/purchase_requisition_items_data');
 Route::put('purchase_requisition_edit','index/purchase/purchase_requisition_edit');
+Route::post('purchase_requisition_items_add_data','index/purchase/purchase_requisition_items_add_data');
+Route::delete('purchase_requisition_items_del_data','index/purchase/purchase_requisition_items_del_data');
 Route::put('purchase_requisition_items_edit','index/purchase/purchase_requisition_items_edit');
 Route::delete('purchase_requisition_del','index/purchase/purchase_requisition_del');
 Route::get('purchase_print_data','index/purchase/print_data');
