@@ -303,9 +303,9 @@ class Purchase extends Base
         $div = "<div>";
         $div .= "<h2 style='text-align:center;'>
         <b style='border-bottom: 1px solid black;padding: 5px;'>{$preData->title}</b> 项目工程 请 购 单</h2>";
-        $div .= "<table border='1' width='800' style='border-collapse: collapse; text-align:center'>";
+        $div .= "<table border='1' width='800' style='border-collapse: collapse; text-align:center;font-size:24px'>";
         $div .= "<tr>";
-        $div .= "<td width='40' height='60'>序号</td><td width='150'>拟采购物品名称</td><td width='100'>规格</td>
+        $div .= "<td width='60' height='60'>序号</td><td width='180'>拟采购物品名称</td><td width='100'>规格</td>
         <td width='100'>单位</td><td width='80'>数量</td><td width='100'>单件估价(元)</td>
         <td width='100'>预算总价(元)</td><td width='220'>用途</td><td width='100'>需求日期</td><td width='200'>备注</td>";
         $div .= "</tr>";
@@ -341,32 +341,32 @@ class Purchase extends Base
 
         // 占位符
         $nbsp = '&nbsp;';
-        for ($i=0; $i<90; $i++ ) {
+        for ($i=0; $i<70; $i++ ) {
             $nbsp .= '&nbsp;';
         }
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='85' style='text-align:left;font-size:36px;'>备注：{$preData ->remarks}</td>";
+        $div .= "<td colspan='10' height='85' style='text-align:left;font-size:30px;'>备注：{$preData ->remarks}</td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='40' style='text-align:left;font-size:36px;'>预算总金额：  人 民 币 {$chineAmount} 元 整（￥{$amount}）    </td>";
+        $div .= "<td colspan='10' height='40' style='text-align:left;font-size:30px;'>预算总金额：  人 民 币 {$chineAmount} 元 整（￥{$amount}）    </td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='80' style='text-align:left;font-size:36px;'>
+        $div .= "<td colspan='10' height='80' style='text-align:left;font-size:30px;'>
         <p style='position:absolute;top:1'>申请人：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
         </td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='80' style='text-align:left;font-size:36px;'>
+        $div .= "<td colspan='10' height='80' style='text-align:left;font-size:30px;'>
         <p style='position:absolute;top:1'>项目经理审批：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
         </td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='80' style='text-align:left;font-size:36px;'>
+        $div .= "<td colspan='10' height='80' style='text-align:left;font-size:30px;'>
         <p style='position:absolute;top:1'>采购部门执行结果：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
         </td>";
         $div .= "</tr>";
