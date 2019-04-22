@@ -329,7 +329,7 @@ class Purchase extends Base
             // 总金额
             $amount+=$v['amount'];
         }
-        $chineAmount = convert_2_cn($amount);
+        $chineAmount = num_to_rmb($amount);
 
         if ($count < $total) {
             // 空白行
@@ -350,7 +350,7 @@ class Purchase extends Base
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='40' style='text-align:left;font-size:30px;'>预算总金额：  人 民 币 {$chineAmount} 元 整（￥{$amount}）    </td>";
+        $div .= "<td colspan='10' height='40' style='text-align:left;font-size:30px;'>预算总金额：  人 民 币 {$chineAmount}（￥{$amount}）    </td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
