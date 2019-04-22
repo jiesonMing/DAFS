@@ -311,24 +311,81 @@ class Purchase extends Base
         $div .= "</tr>";
 
         $amount = 0;$total = 15;$count = count($itemsData);
+        
+        $tempArr = [];
         foreach ($itemsData as $k => $v) {
-            $k++;
+            $tempArr['use'][$v['use']][] = $v->toArray();
+            $tempArr['needtime'][$v['needtime']][] = $v->toArray();
+            $tempArr['remarks'][$v['remarks']][] = $v->toArray();
+        }
+
+        $newArr1 = $newArr2 = $newArr3 = [];
+        foreach ($tempArr['use'] as $k => $arr) {
+            $rowslpan = count($arr);
+            foreach ($arr as $i => &$v) {
+                if ($i == 0) {
+                    $v['use_rowspan'] = $rowslpan;
+                } else {
+                    unset($v['use']);
+                }
+                $newArr1[] = $v;
+            }
+        }
+
+        foreach ($tempArr['needtime'] as $k => $arr) {
+            $rowslpan = count($arr);
+            foreach ($arr as $i => &$v) {
+                if ($i == 0) {
+                    $v['needtime_rowspan'] = $rowslpan;
+                } else {
+                    unset($v['needtime']);
+                }
+                $newArr2[] = $v;
+            }
+
+        }
+
+        foreach ($tempArr['remarks'] as $k => $arr) {
+            $rowslpan = count($arr);
+            foreach ($arr as $i => &$v) {
+                if ($i == 0) {
+                    $v['remarks_rowspan'] = $rowslpan;
+                } else {
+                    unset($v['remarks']);
+                }
+                $newArr3[] = $v;
+            }
+
+        }
+
+        foreach ($newArr1 as $k => $v) {
+            $kk = $k;
+            $kk++;
             $div .= "<tr>";
-            $div .= "<td height='60'>{$k}</td>";
+            $div .= "<td height='60'>{$kk}</td>";
             $div .= "<td>{$v['name']}</td>";
             $div .= "<td>{$v['spec']}</td>";
             $div .= "<td>{$v['unit']}</td>";
             $div .= "<td>{$v['qty']}</td>";
             $div .= "<td>{$v['price']}</td>";
             $div .= "<td>{$v['amount']}</td>";
-            $div .= "<td>{$v['use']}</td>";
-            $div .= "<td>{$v['needtime']}</td>";
-            $div .= "<td>{$v['remarks']}</td>";
+            if(isset($v['use'])) {
+                $div .= "<td rowspan='{$v['use_rowspan']}'>{$v['use']}</td>";
+            }
+            if(isset($newArr2[$k]['needtime'])) {
+                $div .= "<td rowspan='{$newArr2[$k]['needtime_rowspan']}'>{$newArr2[$k]['needtime']}</td>";
+            }
+            if(isset($newArr3[$k]['remarks'])) {
+                $div .= "<td rowspan='{$newArr3[$k]['remarks_rowspan']}'>{$newArr3[$k]['remarks']}</td>";
+            }
             $div .= "</tr>";
 
+           
             // 总金额
             $amount+=$v['amount'];
+            $k++;
         }
+
         $chineAmount = num_to_rmb($amount);
 
         if ($count < $total) {
@@ -338,7 +395,6 @@ class Purchase extends Base
             }
         }
         
-
         // 占位符
         $nbsp = '&nbsp;';
         for ($i=0; $i<70; $i++ ) {
