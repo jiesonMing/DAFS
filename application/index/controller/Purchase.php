@@ -323,10 +323,10 @@ class Purchase extends Base
         // 组装数据
         $div = "<div>";
         $div .= "<h2 style='text-align:center;'>
-        <b style='border-bottom: 1px solid black;padding: 5px;'>{$preData->title}</b> 项目工程 请 购 单</h2>";
+        <b style='border-bottom: 1px solid black;padding: 2px;'>{$preData->title}</b> 项目工程 请 购 单</h2>";
         $div .= "<table border='1' width='800' style='border-collapse: collapse; text-align:center;font-size:24px'>";
         $div .= "<tr>";
-        $div .= "<td width='60' height='60'>序号</td><td width='180'>拟采购物品名称</td><td width='100'>规格</td>
+        $div .= "<td width='60' height='58'>序号</td><td width='180'>拟采购物品名称</td><td width='100'>规格</td>
         <td width='100'>单位</td><td width='80'>数量</td><td width='100'>单件估价(元)</td>
         <td width='100'>预算总价(元)</td><td width='220'>用途</td><td width='100'>需求日期</td><td width='200'>备注</td>";
         $div .= "</tr>";
@@ -343,7 +343,7 @@ class Purchase extends Base
 
         $newArr1 = $newArr2 = $newArr3 = [];
 
-        $pagesize = 20 ;//每页的条数
+        $pagesize = 24 ;//每页的条数
         $newArr1 = mergeCells($tempArr['use'], 'use',$pagesize);
         $newArr2 = mergeCells($tempArr['needtime'], 'needtime',$pagesize);
         $newArr3 = mergeCells($tempArr['remarks'], 'remarks',$pagesize);
@@ -358,7 +358,7 @@ class Purchase extends Base
             $kk = $k;
             $kk++;
             $div .= "<tr>";
-            $div .= "<td height='60'>{$kk}</td>";
+            $div .= "<td height='56'>{$kk}</td>";
             $div .= "<td>{$v['name']}</td>";
             $div .= "<td>{$v['spec']}</td>";
             $div .= "<td>{$v['unit']}</td>";
@@ -388,7 +388,7 @@ class Purchase extends Base
         if ($count < $total) {
             // 空白行
             for ($i=0; $i<($total - $count); $i++) {
-                $div .= "<tr><td height='60'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+                $div .= "<tr><td height='58'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
             }
         }
         
@@ -399,27 +399,27 @@ class Purchase extends Base
         }
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='85' style='text-align:left;font-size:30px;'>备注：{$preData ->remarks}</td>";
+        $div .= "<td colspan='10' height='82' style='text-align:left;font-size:30px;'>备注：{$preData ->remarks}</td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='40' style='text-align:left;font-size:30px;'>预算总金额：  人 民 币 {$chineAmount}（￥{$amount}）    </td>";
+        $div .= "<td colspan='10' height='38' style='text-align:left;font-size:30px;'>预算总金额：  人 民 币 {$chineAmount}（￥{$amount}）    </td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='80' style='text-align:left;font-size:30px;'>
+        $div .= "<td colspan='10' height='78' style='text-align:left;font-size:30px;'>
         <p style='position:absolute;top:1'>申请人：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
         </td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='80' style='text-align:left;font-size:30px;'>
+        $div .= "<td colspan='10' height='78' style='text-align:left;font-size:30px;'>
         <p style='position:absolute;top:1'>项目经理审批：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
         </td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='80' style='text-align:left;font-size:30px;'>
+        $div .= "<td colspan='10' height='78' style='text-align:left;font-size:30px;'>
         <p style='position:absolute;top:1'>采购部门执行结果：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
         </td>";
         $div .= "</tr>";
@@ -432,7 +432,7 @@ class Purchase extends Base
         }
         
         vendor('mpdf.mpdf');
-        $mpdf = new \mPDF('zh-CN','A4','','', 5,5,5,5);
+        $mpdf = new \mPDF('zh-CN','A4','','', 1,1,1,0);
 
         $mpdf->WriteHTML($div);
         $mpdf->Output(ROOT_PATH."public/template/purchase_pre.pdf");
