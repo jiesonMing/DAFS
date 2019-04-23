@@ -315,7 +315,6 @@ class Purchase extends Base
     public function print_data($isExport = false)
     {
         header("Content-type:text/html;charset=utf-8");
-        vendor('mpdf.mpdf');
 
         $this->datas  = $this->req->param(true);
         $preData   = PurchasePre::get($this->datas['preId']);
@@ -334,6 +333,7 @@ class Purchase extends Base
 
         $amount = 0;$total = 15;$count = count($itemsData);
         
+        // 把需要合并的字段提取分组
         $tempArr = [];
         foreach ($itemsData as $k => $v) {
             $tempArr['use'][$v['use']][] = $v->toArray();
@@ -342,45 +342,19 @@ class Purchase extends Base
         }
 
         $newArr1 = $newArr2 = $newArr3 = [];
-        foreach ($tempArr['use'] as $k => $arr) {
-            $rowslpan = count($arr);
-            foreach ($arr as $i => &$v) {
-                if ($i == 0) {
-                    $v['use_rowspan'] = $rowslpan;
-                } else {
-                    unset($v['use']);
-                }
-                $newArr1[] = $v;
-            }
-        }
 
-        foreach ($tempArr['needtime'] as $k => $arr) {
-            $rowslpan = count($arr);
-            foreach ($arr as $i => &$v) {
-                if ($i == 0) {
-                    $v['needtime_rowspan'] = $rowslpan;
-                } else {
-                    unset($v['needtime']);
-                }
-                $newArr2[] = $v;
-            }
+        $pagesize = 20 ;//每页的条数
+        $newArr1 = mergeCells($tempArr['use'], 'use',$pagesize);
+        $newArr2 = mergeCells($tempArr['needtime'], 'needtime',$pagesize);
+        $newArr3 = mergeCells($tempArr['remarks'], 'remarks',$pagesize);
 
-        }
-
-        foreach ($tempArr['remarks'] as $k => $arr) {
-            $rowslpan = count($arr);
-            foreach ($arr as $i => &$v) {
-                if ($i == 0) {
-                    $v['remarks_rowspan'] = $rowslpan;
-                } else {
-                    unset($v['remarks']);
-                }
-                $newArr3[] = $v;
-            }
-
-        }
-
+        // 合并数组
+        $newArray = [];
         foreach ($newArr1 as $k => $v) {
+            $newArray[] = array_merge($v,$newArr2[$k],$newArr3[$k]);
+        }
+
+        foreach ($newArray as $k => $v) {
             $kk = $k;
             $kk++;
             $div .= "<tr>";
@@ -391,23 +365,24 @@ class Purchase extends Base
             $div .= "<td>{$v['qty']}</td>";
             $div .= "<td>{$v['price']}</td>";
             $div .= "<td>{$v['amount']}</td>";
-            if(isset($v['use'])) {
+            if(isset($v['use']) && isset($v['use_rowspan'])) {
                 $div .= "<td rowspan='{$v['use_rowspan']}'>{$v['use']}</td>";
             }
-            if(isset($newArr2[$k]['needtime'])) {
-                $div .= "<td rowspan='{$newArr2[$k]['needtime_rowspan']}'>{$newArr2[$k]['needtime']}</td>";
+
+            if(isset($v['needtime']) && isset($v['needtime_rowspan'])) {
+                $div .= "<td rowspan='{$v['needtime_rowspan']}'>{$v['needtime']}</td>";
             }
-            if(isset($newArr3[$k]['remarks'])) {
-                $div .= "<td rowspan='{$newArr3[$k]['remarks_rowspan']}'>{$newArr3[$k]['remarks']}</td>";
+            if(isset($v['remarks']) && isset($v['remarks_rowspan'])) {
+                $div .= "<td rowspan='{$v['remarks_rowspan']}'>{$v['remarks']}</td>";
             }
             $div .= "</tr>";
-
            
             // 总金额
             $amount+=$v['amount'];
             $k++;
         }
 
+        // 金额转为大写人名币
         $chineAmount = num_to_rmb($amount);
 
         if ($count < $total) {
@@ -449,21 +424,15 @@ class Purchase extends Base
         </td>";
         $div .= "</tr>";
 
-
         $div .= "</table>";
         $div .= "</div>";
 
         if ($isExport) {
             return $div;exit;
         }
-
-        $filename = '';
+        
+        vendor('mpdf.mpdf');
         $mpdf = new \mPDF('zh-CN','A4','','', 5,5,5,5);
-
-        // $mpdf->SetHTMLHeader("
-        // <divstyle='margin-top:10px;'>
-        // <h2 style='text-align:center;'><b style='border-bottom: 1px solid black;padding: 5px;'>{$preData->title}</b> 项目工程 请 购 单</h2>
-        // </div>");
 
         $mpdf->WriteHTML($div);
         $mpdf->Output(ROOT_PATH."public/template/purchase_pre.pdf");

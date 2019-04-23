@@ -171,3 +171,37 @@ function num_to_rmb($num){
     return $str;
 }
 
+// 请购单打印数据，按字段合并
+function mergeCells($data,$field,$pagesize)
+{
+    $res = [];
+    foreach ($data as $k => $arr) {
+        $rowslpan = count($arr);
+        $page = ceil($rowslpan/$pagesize);// 有多少页
+        foreach ($arr as $i => &$v) {
+            if ($rowslpan>$pagesize) {
+                // 获取索引数组
+                $nArr = [];
+                for ($n = 0;$n<$page;$n++) {
+                    $nArr[] = $n*$pagesize;
+                }
+                if (in_array($i, $nArr)) {
+                    $nArr[] = $rowslpan;
+                    $keyArr = array_keys($nArr, $i);
+                    $v[$field.'_rowspan'] = $nArr[$keyArr[0]+1]-$nArr[$keyArr[0]];
+                } else {
+                    unset($v[$field]);
+                }
+            } else {
+                if ($i == 0) {
+                    $v[$field.'_rowspan'] = $rowslpan;
+                } else {
+                    unset($v[$field]);
+                }
+            }
+            $res[] = $v;
+        }
+    }
+    return $res;
+}
+
