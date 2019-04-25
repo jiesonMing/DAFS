@@ -4,6 +4,7 @@ use think\Db;
 use app\index\controller\Base;
 use app\index\model\PurchasePre;
 use app\index\model\PurchasePreItem;
+use think\Config;
 
 /*
 * 采购管理的采购单
@@ -31,19 +32,25 @@ class Purchase extends Base
         if (isset($this->datas['endTime']) && !empty($this->datas['endTime'])) {
             $where.=" and addtime <=".strtotime($this->datas['endTime']);
         }
+        $page = isset($this->datas['page'])?$this->datas['page']:1;
+        $limit = isset($this->datas['limit'])?$this->datas['limit']:Config::get('paginate.list_rows');
+        $startLimit = ($page-1)*$limit;
         
         $PurchasePre = new PurchasePre();
+
+        $count = $PurchasePre->where($where)->count();
         $list = $PurchasePre
             ->field('id,title,purchase_code,filepath,remarks,addtime,filename,pdfname,pdfpath')
             ->where($where)
             ->order('id', 'desc')
+            ->limit($startLimit, $limit)
             ->select();
         foreach ($list as $k => &$v) {
             $v['index']    = $k+1;
             $v['addtime']  = date('Y-m-d H:i:s', $v['addtime']);
             $v['pdfpath'] = "<a href='http://{$_SERVER['SERVER_NAME']}{$v['pdfpath']}' target='_blank' style='color:#1E9FFF'>{$v['pdfname']}</a>";
         }
-        return ajaxReturn(0,'success', $list);
+        return ajaxReturn(0,'success', $list, $count);
     }
 
     # 请购单items
