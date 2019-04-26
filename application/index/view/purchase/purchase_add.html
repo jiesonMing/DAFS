@@ -86,7 +86,7 @@
     ,table = layui.table;
 
     var emptyData = [
-      {'purchase_time':'','material':'','brand':'','spec':'','unit':'','qty':'','price':'','amount':'','remarks':''}
+      {'purchase_time':'','material':'','brand':'','spec':'','unit':'','qty':'','price':'','amount':'','supplier':'','remarks':''}
     ]
     // 表格
     table.render({
@@ -94,15 +94,16 @@
       ,limit:100
       ,limits:[10,30,50,100]
       ,cols: [[
-        {field:'purchase_time', title: '采购时间',width:120, edit:'text',}
-        ,{field:'material', title: '物料明细',width:200, edit:'text',}
-        ,{field:'brand', title: '牌子',width:120, edit:'text',}
-        ,{field:'spec', width:120, title: '规格型号', edit:'text'}
-        ,{field:'unit', width:100, title: '单位', edit:'text'}
-        ,{field:'qty', title: '数量', width: 100,totalRow: true, edit:'text'} //minwidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
-        ,{field:'price', title: '单价(元)',width:150,totalRow: true, edit:'text'}
-        ,{field:'amount', title: '合计(元)',width:150,totalRow: true, edit:'text'}
-        ,{field:'remarks', title: '备注', edit:'text',width:'24%'}
+        {field:'purchase_time', title: '采购时间', edit:'text',}
+        ,{field:'material', title: '物料明细', edit:'text',}
+        ,{field:'brand', title: '牌子', edit:'text',}
+        ,{field:'spec', title: '规格型号', edit:'text'}
+        ,{field:'unit', title: '单位', edit:'text'}
+        ,{field:'qty', title: '数量', totalRow: true, edit:'text'} //minwidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+        ,{field:'price', title: '单价(元)',totalRow: true, edit:'text'}
+        ,{field:'amount', title: '合计(元)',totalRow: true, edit:'text'}
+        ,{field:'supplier', title: '供应商', edit:'text'}
+        ,{field:'remarks', title: '备注', edit:'text'}
         ,{title: '操作', fixed: 'right', align:'center', toolbar: '#operateBar'}
       ]]
       ,data:emptyData
@@ -143,7 +144,7 @@
     // 添加一行数据
     $('#addTr').on('click',function(){
       var data = table.cache.itemsTable;
-      data.push({'purchase_time':'','material':'','brand':'','spec':'','unit':'','qty':'','price':'','amount':'','remarks':''})
+      data.push({'purchase_time':'','material':'','brand':'','spec':'','unit':'','qty':'','price':'','amount':'','supplier':'','remarks':''})
       table.reload('itemsTable',{
           data : data
       });

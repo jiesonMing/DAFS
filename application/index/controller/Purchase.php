@@ -311,7 +311,7 @@ class Purchase extends Base
         return $this->fetch('purchase/purchase_requisition_pdf');
     }
 
-    # 打印数据
+    # 请购单打印数据
     public function print_data($isExport = false)
     {
         header("Content-type:text/html;charset=utf-8");
@@ -620,6 +620,164 @@ class Purchase extends Base
             Db::rollback();
             return ajaxReturn(-1, $e->getMessage());
         }
+    }
+
+    # 编辑采购单items数据的时候新增一条数据
+    public function purchase_items_add_data()
+    {
+        $items = new PurchaseItems;
+        $items->data(['pid' => $this->datas['pId']]);
+        $items->save();
+        return ajaxReturn(0, 'success');
+    }
+
+    # 编辑采购单items数据的时候删除一条数据
+    public function purchase_items_del_data()
+    {
+        $items = PurchaseItems::get($this->datas['id']);
+        $items->delete();
+        return ajaxReturn(0, 'success');
+    }
+
+    #采购单打印数据
+    public function purchase_print_data($isExport = false)
+    {
+        header("Content-type:text/html;charset=utf-8");
+
+        $purchaseData   = PurchaseModel::get($this->datas['pId']);
+        $itemsData      = PurchaseItems::all(['pid' => $this->datas['pId']]);
+
+        // 组装数据
+        $div = "<div>";
+        $div .= "<h2 style='text-align:center;'>
+        <b style='border-bottom: 1px solid black;padding: 2px;'>釆购报销单明细表</b> </h2>";
+        $div .= "<table border='1' width='800' style='border-collapse: collapse; text-align:center;font-size:24px'>";
+
+        $div .= "<tr>";
+        $div .= "<td colspan='4' height='60' style='text-align:left;'>采购项目部：{$purchaseData->purchase_project}</td>
+        <td colspan='3' style='text-align:left;'>采购员：{$purchaseData->purchaser}</td>
+        <td colspan='4' style='text-align:left;'>联系电话：{$purchaseData->phone}</td>";
+        $div .= "</tr>";
+
+        $div .= "<tr>";
+        $div .= "<td colspan='11' height='80' style='text-align:left;'>注：{$purchaseData->remarks} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$purchaseData->purchase_number}</td>";
+        $div .= "</tr>";
+
+        $div .= "<tr>";
+        $div .= "<td width='150'>采购时间</td><td width='60' height='58'>序号</td>
+        <td width='180'>物料明细</td><td width='120'>牌子</td><td width='100'>规格型号</td>
+        <td width='100'>单位</td><td width='80'>数量</td><td width='100'>单价</td>
+        <td width='100'>合计(元)</td><td width='200'>供应商</td><td width='200'>备注</td>";
+        $div .= "</tr>";
+
+        $amount = 0;$total = 15;$count = count($itemsData);
+        
+        // 把需要合并的字段提取分组
+        $tempArr = [];
+        foreach ($itemsData as $k => $v) {
+            $tempArr['purchase_time'][$v['purchase_time']][] = $v->toArray();
+            $tempArr['supplier'][$v['supplier']][] = $v->toArray();
+            $tempArr['remarks'][$v['remarks']][] = $v->toArray();
+        }
+
+        $newArr1 = $newArr2 = $newArr3 = [];
+
+        $pagesize = 24 ;//每页的条数
+        $newArr1 = mergeCells($tempArr['purchase_time'], 'purchase_time',$pagesize);
+        $newArr2 = mergeCells($tempArr['supplier'], 'supplier',$pagesize);
+        $newArr3 = mergeCells($tempArr['remarks'], 'remarks',$pagesize);
+
+        // 合并数组
+        $newArray = [];
+        foreach ($newArr1 as $k => $v) {
+            $newArray[] = array_merge($v,$newArr2[$k],$newArr3[$k]);
+        }
+
+        foreach ($newArray as $k => $v) {
+            $kk = $k;
+            $kk++;
+            $div .= "<tr>";
+            if(isset($v['purchase_time']) && isset($v['purchase_time_rowspan'])) {
+                $div .= "<td rowspan='{$v['purchase_time_rowspan']}'>{$v['purchase_time']}</td>";
+            }
+            $div .= "<td height='56'>{$kk}</td>";
+            $div .= "<td>{$v['material']}</td>";
+            $div .= "<td>{$v['brand']}</td>";
+            $div .= "<td>{$v['brand']}</td>";
+            $div .= "<td>{$v['spec']}</td>";
+            $div .= "<td>{$v['unit']}</td>";
+            $div .= "<td>{$v['price']}</td>";
+            $div .= "<td>{$v['amount']}</td>";
+            
+            if(isset($v['supplier']) && isset($v['supplier_rowspan'])) {
+                $div .= "<td rowspan='{$v['supplier_rowspan']}'>{$v['supplier']}</td>";
+            }
+            if(isset($v['remarks']) && isset($v['remarks_rowspan'])) {
+                $div .= "<td rowspan='{$v['remarks_rowspan']}'>{$v['remarks']}</td>";
+            }
+            $div .= "</tr>";
+           
+            // 总金额
+            $amount+=$v['amount'];
+            $k++;
+        }
+
+        // 金额转为大写人名币
+        // $chineAmount = num_to_rmb($amount);
+
+        if ($count < $total) {
+            // 空白行
+            for ($i=0; $i<($total - $count); $i++) {
+                $div .= "<tr><td height='58'></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+            }
+        }
+        
+        // // 占位符
+        // $nbsp = '&nbsp;';
+        // for ($i=0; $i<70; $i++ ) {
+        //     $nbsp .= '&nbsp;';
+        // }
+        $style = "style='border:0px solid white;font-size:32px;text-align:left;'";
+        $div .= "<tr {$style}>";
+        $div .= "<td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td>
+        <td {$style}>合计：</td><td {$style}>{$amount}</td>
+        <td {$style}></td><td {$style}></td>";
+        $div .= "</tr>";
+
+        $div .= "<tr {$style}>";
+        $div .= "<td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td>
+        <td {$style}></td>
+        <td {$style}></td>";
+        $div .= "</tr>";
+
+        $div .= "<tr {$style}>";
+        $div .= "<td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td>
+        <td {$style}>采购组长审阅：</td>
+        <td {$style}></td>";
+        $div .= "</tr>";
+
+        $div .= "<tr {$style}>";
+        $div .= "<td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td><td {$style}></td>
+        <td {$style}>签单日期：</td>
+        <td {$style}></td>";
+        $div .= "</tr>";
+
+
+        $div .= "</table>";
+        $div .= "</div>";
+
+        if ($isExport) {
+            return $div;exit;
+        }
+        // var_dump();
+        vendor('mpdf.mpdf');
+        $mpdf = new \mPDF('zh-CN','A4','','', 1,1,1,0);
+
+        $mpdf->WriteHTML($div);
+        $mpdf->Output(ROOT_PATH."public/template/purchase.pdf");
+
+        header("location:http://{$_SERVER['SERVER_NAME']}/template/purchase.pdf");exit;
     }
 
     # 采购单上传数据

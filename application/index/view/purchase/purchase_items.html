@@ -6,15 +6,18 @@
         <h3>采购单数据</h3>
     </div>
     <div class="layui-btn-group demoTable" style="width:100%">
-        <!-- <div style="float:right;">
+        <div style="float:right;">
             <i class="layui-icon layui-icon-print" id="print" title="打印" style="font-size: 30px; color: #009688;padding: 0 5px 0 5px;cursor: pointer;"></i>  
         </div>
+        <!-- 
         <div style="float:right;">
             <i class="layui-icon layui-icon-export" id="export" title="导出" style="font-size: 30px; color: #009688;padding: 0 5px 0 5px;cursor: pointer;"></i>  
-        </div>
+        </div> 
+        -->
+        
         <div style="float:right;">
             <i class="layui-icon layui-icon-add-1" id="addNew" title="添加一行" style="font-size: 30px; color: #009688;padding: 0 5px 0 5px;cursor: pointer;"></i>  
-        </div> -->
+        </div>
         
     </div>
     <table class="layui-hide" id="purchase_items_data" lay-filter="purchase_items_data"></table>
@@ -41,16 +44,17 @@
 
                 [
                     {fixed: 'left', title:'操作', toolbar: '#barDemo', width:70}
-                    ,{field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
-                    ,{field:'purchase_time', title: '采购时间',width:120, edit:'text'}
-                    ,{field:'material', title: '物料明细',width:200, edit:'text'}
-                    ,{field:'brand', title: '牌子',width:120, edit:'text'}
-                    ,{field:'spec', width:120, title: '规格型号', edit:'text'}
-                    ,{field:'unit', width:100, title: '单位', edit:'text'}
-                    ,{field:'qty', title: '数量', width: 100,totalRow: true, edit:'text'}
-                    ,{field:'price', title: '单价(元)',width:150,totalRow: true, edit:'text'}
-                    ,{field:'amount', title: '合计(元)',width:150,totalRow: true, edit:'text'}
-                    ,{field:'remarks', title: '备注',minWidth:150, edit:'text'}
+                    ,{field:  'index', title: '序号', fixed: 'left',width:60}
+                    ,{field:'purchase_time', title: '采购时间', edit:'text',width:110}
+                    ,{field:'material', title: '物料明细', edit:'text'}
+                    ,{field:'brand', title: '牌子', edit:'text'}
+                    ,{field:'spec', title: '规格型号', edit:'text'}
+                    ,{field:'unit', title: '单位', edit:'text'}
+                    ,{field:'qty', title: '数量',totalRow: true, edit:'text'}
+                    ,{field:'price', title: '单价(元)',totalRow: true, edit:'text'}
+                    ,{field:'amount', title: '合计(元)',totalRow: true, edit:'text'}
+                    ,{field:'supplier', title: '供应商', edit:'text'}
+                    ,{field:'remarks', title: '备注', edit:'text'}
                 ],
             ]
         });
@@ -81,9 +85,7 @@
                 data:json,
                 success:function(res){
                     if (res.code == 0) {
-                        layer.msg(res.msg, {icon:1,time:1000}, function(){
-                            tableReload();
-                        });
+                        layer.msg(res.msg, {icon:1,time:1000});
                     } else {
                         layer.msg(res.msg, {icon:0});
                     }
@@ -93,18 +95,18 @@
         
         // 打印
         $("#print").click(function(){
-            window.location.href = "/purchase_print_data?pId="+ {$pId};
+            window.location.href = "/purchase_print?pId="+ {$pId};
         });
 
         // 导出
         $("#export").click(function(){
-            window.location.href = "/purchase_export_data?pId="+ {$pId};
+            window.location.href = "/purchase_export?pId="+ {$pId};
         });
 
         // 添加一行数据
         $("#addNew").click(function(){
             var data = table.cache.purchase_items_data
-            data.push({'purchase_time':'','material':'','brand':'','spec':'','unit':'','qty':'','price':'','amount':'','remarks':''});
+            data.push({'purchase_time':'','material':'','brand':'','spec':'','unit':'','qty':'','price':'','amount':'','供应商':'','remarks':''});
             var pId = {$pId};
             $.ajax({
                 type:'post',

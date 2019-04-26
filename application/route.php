@@ -47,6 +47,9 @@ Route::delete('purchase_del','index/purchase/purchase_del');
 Route::post('purchase_add_upload','index/purchase/purchase_add_upload');
 
 Route::get('purchase_items_data','index/purchase/purchase_items_data');
+Route::post('purchase_items_add_data','index/purchase/purchase_items_add_data');
+Route::delete('purchase_items_del_data','index/purchase/purchase_items_del_data');
+Route::get('purchase_print','index/purchase/purchase_print_data');
 
 // 采购报销单
 Route::get('purchase_expense','index/purchase/purchase_expense_view');

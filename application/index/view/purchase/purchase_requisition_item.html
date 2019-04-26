@@ -81,9 +81,7 @@
                 data:json,
                 success:function(res){
                     if (res.code == 0) {
-                        layer.msg(res.msg, {icon:1,time:1000}, function(){
-                            tableReload();
-                        });
+                        layer.msg(res.msg, {icon:1,time:1000});
                     } else {
                         layer.msg(res.msg, {icon:0});
                     }
