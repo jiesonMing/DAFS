@@ -14,95 +14,65 @@
         </span>
     </div>
     <hr class="layui-bg-gray">
-    <div class="layui-tab">
-      <ul class="layui-tab-title">
-        <li class="layui-this">上传数据</li>
-        <li>手动创建数据</li>
-      </ul>
 
-      <div class="layui-tab-content">
-        <!-- 上传数据 -->
-        <div class="layui-tab-item layui-show">
-          <blockquote class="layui-elem-quote">只允许上传的文件格式为xls、xlsx。上传模版：{$template}</blockquote>
-          <div class="layui-upload">
-            <button type="button" class="layui-btn layui-btn-normal" id="testList">选择多文件</button> 
-            <div class="layui-upload-list">
-                <table class="layui-table">
-                <thead>
-                    <tr><th>文件名</th>
-                    <th>大小</th>
-                    <th>状态</th>
-                    <th>操作</th>
-                </tr></thead>
-                <tbody id="demoList"></tbody>
-                </table>
+        <blockquote class="layui-elem-quote"><i class="red">*</i> 为必填选项。</blockquote>
+        <form class="layui-form">
+          <div class="layui-form-item">
+            <label class="layui-form-label"><i class="red">*</i>采购单编号：</label>
+            <div class="layui-input-block">
+              <input type="text" name="purchase_number" lay-verify="required" autocomplete="off" placeholder="采购单编号" class="layui-input">
             </div>
-            <button type="button" class="layui-btn" id="testListAction">开始上传</button>
           </div>
-        </div>
 
-        <!-- 手动创建数据 -->
-        <div class="layui-tab-item">
-            <blockquote class="layui-elem-quote"><i style="color:#ff0000">*</i> 为必填选项。</blockquote>
-            <form class="layui-form">
-              <div class="layui-form-item">
-                <label class="layui-form-label"><i style="color:#ff0000">*</i>请购单编号：</label>
-                <div class="layui-input-block">
-                  <input type="text" name="purchase_code" lay-verify="required" autocomplete="off" placeholder="请购单编号" class="layui-input">
-                </div>
-              </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label"><i class="red">*</i>采购项目部：</label>
+            <div class="layui-input-block">
+              <input type="text" name="purchase_project" lay-verify="required" autocomplete="off" placeholder="采购项目部" class="layui-input">
+            </div>
+          </div>
 
-              <div class="layui-form-item">
-                <label class="layui-form-label"><i style="color:#ff0000">*</i>请购单数据：</label>
-                <div class="" style="margin-left:130px;">
-                    <button id="addTr" class="layui-btn" style="float: right;">
-                        <i class="layui-icon">&#xe608;</i> 添加一行
-                    </button>
-                    <table class="layui-table" id ="itemsTable" lay-filter="itemsTable"></table>
-                    <script type="text/html" id="operateBar">
-                      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-del"></i>删除</a>
-                  </script>
-                </div>
-              </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label"><i class="red">*</i>采购员：</label>
+            <div class="layui-input-block">
+              <input type="text" name="purchaser" lay-verify="required" autocomplete="off" placeholder="采购员" class="layui-input">
+            </div>
+          </div>
 
+          <div class="layui-form-item">
+            <label class="layui-form-label"><i class="red">*</i>联系电话：</label>
+            <div class="layui-input-block">
+              <input type="tel" name="phone" lay-verify="required" autocomplete="off" placeholder="联系电话" class="layui-input">
+            </div>
+          </div>
 
-              <div class="layui-form-item">
-                  <label class="layui-form-label">申请人：</label>
-                  <div class="layui-input-block">
-                    <input type="text" name="applicant" lay-verify="title" autocomplete="off" placeholder="申请人" class="layui-input">
-                  </div>
-                </div>
-              
-              <div class="layui-form-item">
-                <label class="layui-form-label">项目经理：</label>
-                <div class="layui-input-block">
-                  <input type="text" name="projectmanager" lay-verify="title" autocomplete="off" placeholder="项目经理" class="layui-input">
-                </div>
-              </div>
-                
-              <div class="layui-form-item">
-                <label class="layui-form-label">采购部门结果：</label>
-                <div class="layui-input-block">
-                  <input type="text" name="purchasingdepartment" lay-verify="title" autocomplete="off" placeholder="采购部门执行结果" class="layui-input">
-                </div>
-              </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label"><i class="red">*</i>采购单数据：</label>
+            <div class="" style="margin-left:130px;">
+                <button id="addTr" class="layui-btn" style="float: right;">
+                    <i class="layui-icon">&#xe608;</i> 添加一行
+                </button>
+                <table class="layui-table" id ="itemsTable" lay-filter="itemsTable"></table>
+                <script type="text/html" id="operateBar">
+                  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-del"></i>删除</a>
+              </script>
+            </div>
+          </div>
 
-              <div class="layui-form-item">
-                <label class="layui-form-label">备注：</label>
-                <div class="layui-input-block">
-                  <input type="text" name="remarks" lay-verify="title" autocomplete="off" placeholder="备注" class="layui-input">
-                </div>
-              </div>
+          <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注：</label>
+            <div class="layui-input-block">
+              <textarea placeholder="请输入备注" class="layui-textarea" name="remarks"></textarea>
+            </div>
+          </div>
 
-              <div class="layui-form-item">
-                <div class="layui-input-block">
-                  <button class="layui-btn" lay-submit="" lay-filter="purchase_requisition_form">确认保存</button>
-                  <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                </div>
-              </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button class="layui-btn" lay-submit="" lay-filter="purchase_form">确认保存</button>
+              <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+          </div>
 
-            </form>
-        </div>
+        </form>
       </div>
     </div> 
 </div>
@@ -114,103 +84,52 @@
     ,upload = layui.upload
     ,form = layui.form
     ,table = layui.table;
-    
-    //多文件列表示例
-    var demoListView = $('#demoList')
-    ,uploadListIns = upload.render({
-      elem: '#testList'
-      ,url: '/purchase_add_upload'
-      ,accept: 'file'
-      ,exts: 'xls|xlsx' //只允许excel、pdf
-      ,multiple: true
-      ,auto: false
-      ,bindAction: '#testListAction'
-      ,choose: function(obj){   
-        var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
-        //读取本地文件
-        obj.preview(function(index, file, result){
-          var tr = $(['<tr id="upload-'+ index +'">'
-            ,'<td>'+ file.name +'</td>'
-            ,'<td>'+ (file.size/1014).toFixed(1) +'kb</td>'
-            ,'<td>等待上传</td>'
-            ,'<td>'
-              ,'<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
-              ,'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
-            ,'</td>'
-          ,'</tr>'].join(''));
-          
-          //单个重传
-          tr.find('.demo-reload').on('click', function(){
-            obj.upload(index, file);
-          });
-          
-          //删除
-          tr.find('.demo-delete').on('click', function(){
-            delete files[index]; //删除对应的文件
-            tr.remove();
-            uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
-          });
-          
-          demoListView.append(tr);
-        });
-      }
-      ,done: function(res, index, upload){
-        if(res.code == 0){ //上传成功
-          var tr = demoListView.find('tr#upload-'+ index)
-          ,tds = tr.children();
-          tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
-          tds.eq(3).html(''); //清空操作
-          return delete this.files[index]; //删除文件队列已经上传成功的文件
-        }
-        this.error(index, upload);
-      }
-      ,error: function(index, upload){
-        var tr = demoListView.find('tr#upload-'+ index)
-        ,tds = tr.children();
-        tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
-        tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
-      }
-    });
 
     var emptyData = [
-      {'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','remarks':''}
+      {'purchase_time':'','material':'','brand':'','spec':'','unit':'','qty':'','price':'','amount':'','remarks':''}
     ]
     // 表格
     table.render({
       elem: '#itemsTable'
+      ,limit:100
+      ,limits:[10,30,50,100]
       ,cols: [[
-        {field:'name', title: '拟采购物品名称(车牌)',width:200, edit:'text',}
-        ,{field:'spec', width:80, title: '规格', edit:'text'}
-        ,{field:'unit', width:80, title: '单位', edit:'text'}
-        ,{field:'qty', title: '数量', width: 80,totalRow: true, edit:'text'} //minwidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
-        ,{field:'price', title: '单件估价(元)',width:150,totalRow: true, edit:'text'}
-        ,{field:'amount', title: '预算总价(元)',width:150,totalRow: true, edit:'text'}
-        ,{field:'use', title: '用途',width:200, edit:'text'}
-        ,{field:'needtime', width:100, title: '需求日期', edit:'text'}
-        ,{field:'remarks', title: '备注', edit:'text',width:'25%'}
-        ,{title: '操作', fixed: 'right', width:80, align:'center', toolbar: '#operateBar'}
+        {field:'purchase_time', title: '采购时间',width:120, edit:'text',}
+        ,{field:'material', title: '物料明细',width:200, edit:'text',}
+        ,{field:'brand', title: '牌子',width:120, edit:'text',}
+        ,{field:'spec', width:120, title: '规格型号', edit:'text'}
+        ,{field:'unit', width:100, title: '单位', edit:'text'}
+        ,{field:'qty', title: '数量', width: 100,totalRow: true, edit:'text'} //minwidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+        ,{field:'price', title: '单价(元)',width:150,totalRow: true, edit:'text'}
+        ,{field:'amount', title: '合计(元)',width:150,totalRow: true, edit:'text'}
+        ,{field:'remarks', title: '备注', edit:'text',width:'24%'}
+        ,{title: '操作', fixed: 'right', align:'center', toolbar: '#operateBar'}
       ]]
       ,data:emptyData
     });
 
+    var itemsTableData = JSON.parse(window.localStorage.getItem('itemsTableData'));
+    if(itemsTableData!=null){
+      table.reload('itemsTable',{
+          data : itemsTableData
+      });
+    }
+
     //监听提交
-    form.on('submit(purchase_requisition_form)', function(data){
+    form.on('submit(purchase_form)', function(data){
       var data = data.field;
       data.itemsData = table.cache.itemsTable;
-
-      console.log(data);
-      // layer.alert(JSON.stringify(data.field), {
-      //   title: '最终的提交信息'
-      // })
-      // return false;
       $.ajax({
         type:'post',
         dataType:'json',
         data: data,
-        url:'/purchase_requisition_add_data',
+        url:'/purchase_add_data',
         success:function(res){
           if (res.code == 0) {
-              layer.msg(res.msg, {icon:1});
+              window.localStorage.setItem('itemsTableData', null);
+                layer.msg(res.msg, {icon:1,time:1000},function() {
+                window.location.href = "/purchase";
+              });
           } else {
             layer.msg(res.msg, {icon:0});
           }
@@ -224,11 +143,17 @@
     // 添加一行数据
     $('#addTr').on('click',function(){
       var data = table.cache.itemsTable;
-      data.push({'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','remarks':''})
+      data.push({'purchase_time':'','material':'','brand':'','spec':'','unit':'','qty':'','price':'','amount':'','remarks':''})
       table.reload('itemsTable',{
           data : data
       });
       return false;
+    });
+
+    // 把输入的数据缓存
+    table.on('edit(itemsTable)', function(obj){
+      var data = JSON.stringify(table.cache.itemsTable);
+      window.localStorage.setItem('itemsTableData', data);
     });
     
     // 删除一行
@@ -236,7 +161,11 @@
         layer.confirm('真的删除行么', function(index){
           obj.del();
           layer.close(index);
+
+          var data = JSON.stringify(table.cache.itemsTable);
+          window.localStorage.setItem('itemsTableData', data);
         });
+
     });
     
   });

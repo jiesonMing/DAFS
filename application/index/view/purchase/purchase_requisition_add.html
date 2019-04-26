@@ -22,24 +22,24 @@
       <div class="layui-tab-content">
         <!-- 手动创建数据 -->
         <div class="layui-tab-item layui-show">
-            <blockquote class="layui-elem-quote"><i style="color:#ff0000">*</i> 为必填选项。</blockquote>
+            <blockquote class="layui-elem-quote"><i class="red">*</i> 为必填选项。</blockquote>
             <form class="layui-form">
               <div class="layui-form-item">
-                <label class="layui-form-label"><i style="color:#ff0000">*</i>请购单标题：</label>
+                <label class="layui-form-label"><i class="red">*</i>请购单标题：</label>
                 <div class="layui-input-block">
                   <input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请购单标题" class="layui-input">
                 </div>
               </div>
 
               <div class="layui-form-item">
-                <label class="layui-form-label"><i style="color:#ff0000">*</i>请购单编号：</label>
+                <label class="layui-form-label"><i class="red">*</i>请购单编号：</label>
                 <div class="layui-input-block">
                   <input type="text" name="purchase_code" lay-verify="required" autocomplete="off" placeholder="请购单编号" class="layui-input">
                 </div>
               </div>
 
               <div class="layui-form-item">
-                <label class="layui-form-label"><i style="color:#ff0000">*</i>请购单数据：</label>
+                <label class="layui-form-label"><i class="red">*</i>请购单数据：</label>
                 <div class="" style="margin-left:130px;">
                     <button id="addTr" class="layui-btn" style="float: right;">
                         <i class="layui-icon">&#xe608;</i> 添加一行
@@ -73,10 +73,10 @@
                 </div>
               </div>
 
-              <div class="layui-form-item">
+              <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">备注：</label>
                 <div class="layui-input-block">
-                  <input type="text" name="remarks" lay-verify="title" autocomplete="off" placeholder="备注" class="layui-input">
+                  <textarea placeholder="请输入备注" class="layui-textarea" name="remarks"></textarea>
                 </div>
               </div>
 
@@ -199,7 +199,7 @@
         ,{field:'use', title: '用途',width:200, edit:'text'}
         ,{field:'needtime', width:100, title: '需求日期', edit:'text'}
         ,{field:'remarks', title: '备注', edit:'text',width:'25%'}
-        ,{title: '操作', fixed: 'right', width:80, align:'center', toolbar: '#operateBar'}
+        ,{title: '操作', fixed: 'right', align:'center', toolbar: '#operateBar'}
       ]]
       ,data:emptyData
     });
@@ -222,8 +222,11 @@
         url:'/purchase_requisition_add_data',
         success:function(res){
           if (res.code == 0) {
-              layer.msg(res.msg, {icon:1,time:1000});
               window.localStorage.setItem('itemsTableData', null);
+              layer.msg(res.msg, {icon:1,time:1000},function() {
+                window.location.href = "/purchase_requisition";
+              });
+              
           } else {
             layer.msg(res.msg, {icon:0});
           }

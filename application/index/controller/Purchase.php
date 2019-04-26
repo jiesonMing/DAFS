@@ -4,6 +4,8 @@ use think\Db;
 use app\index\controller\Base;
 use app\index\model\PurchasePre;
 use app\index\model\PurchasePreItem;
+use app\index\model\PurchaseModel;
+use app\index\model\PurchaseItems;
 use think\Config;
 
 /*
@@ -11,6 +13,14 @@ use think\Config;
 */
 class Purchase extends Base
 {
+    protected $datas = [];
+
+    public function _initialize()
+    {
+        parent::_initialize();
+        $this->datas  = $this->req->param(true);
+    }
+
     # 请购单
     public function purchase_requisition_view()
     {
@@ -20,8 +30,6 @@ class Purchase extends Base
     # 请购单主数据
     public function purchase_requisition_data()
     {
-        $this->datas  = $this->req->param(true);
-
         $where = 'isdel = 0';
         if (isset($this->datas['search'])) {
             $where.=" and concat(purchase_code, filename) like '%{$this->datas['search']}%'";
@@ -56,7 +64,6 @@ class Purchase extends Base
     # 请购单items
     public function purchase_requisition_items_view()
     {
-        $this->datas  = $this->req->param(true);
         $PurchasePre = PurchasePre::get($this->datas['preId']);
         if($PurchasePre->filetype == 2) {
             // 查看pdf文件
@@ -69,7 +76,6 @@ class Purchase extends Base
     # 请购单items 数据
     public function purchase_requisition_items_data()
     {
-        $this->datas  = $this->req->param(true);
         $data = PurchasePreItem::all(['ppid' => $this->datas['preId']]);
         foreach ($data as $k => &$v) {
             $v['index']    = $k+1;
@@ -88,7 +94,6 @@ class Purchase extends Base
     # 手动新增请购单items数据
     public function purchase_requisition_add_data()
     {
-        $this->datas  = $this->req->param(true);
         $mainData = array(
             'title'               => $this->datas['title'],
             'purchase_code'        => $this->datas['purchase_code'],
@@ -123,8 +128,6 @@ class Purchase extends Base
     # 编辑请购单数据
     public function purchase_requisition_edit()
     {
-        $this->datas  = $this->req->param(true);
-
         Db::startTrans();
         try {
             $PurchasePre = PurchasePre::get($this->datas['pid']);
@@ -143,16 +146,11 @@ class Purchase extends Base
     # 删除请购单数据
     public function purchase_requisition_del()
     {
-        $this->datas  = $this->req->param(true);
-
         Db::startTrans();
         try {
             $PurchasePre = PurchasePre::get($this->datas['pid']);
             $PurchasePre->delete();
             $PurchasePre->items()->delete();
-            // $PurchasePre->together('items')->delete();
-            //$PurchasePre->isdel = 1;
-            //$PurchasePre->save();
             
             Db::commit();
             return ajaxReturn(0, 'success');
@@ -165,7 +163,6 @@ class Purchase extends Base
     # 编辑请购单数据的时候新增一条数据
     public function purchase_requisition_items_add_data()
     {
-        $this->datas  = $this->req->param(true);
         $items = new PurchasePreItem;
         $items->data(['ppid' => $this->datas['preId']]);
         $items->save();
@@ -175,7 +172,6 @@ class Purchase extends Base
     # 编辑请购单数据的时候删除一条数据
     public function purchase_requisition_items_del_data()
     {
-        $this->datas  = $this->req->param(true);
         $items = PurchasePreItem::get($this->datas['id']);
         $items->delete();
         return ajaxReturn(0, 'success');
@@ -184,7 +180,6 @@ class Purchase extends Base
     # 编辑请购单items数据
     public function purchase_requisition_items_edit()
     {
-        $this->datas  = $this->req->param(true);
         Db::startTrans();
         try {
             $PurchasePreItem = PurchasePreItem::get($this->datas['id']);
@@ -203,7 +198,6 @@ class Purchase extends Base
     # 请购单数据上传,若文件为pdf,则只需保存文件
     public function purchase_requisition_upload()
     {
-        $this->datas  = $this->req->param(true);
         $pid = isset($this->datas['pid'])?$this->datas['pid']:'';
 
         require_once EXTEND_PATH."export/PHPExcel.php";
@@ -313,7 +307,6 @@ class Purchase extends Base
     # 上传扫描件view
     public function purchase_requisition_pdf_view()
     {
-        $this->datas  = $this->req->param(true);
         $this->assign('pid', $this->datas['preId']);
         return $this->fetch('purchase/purchase_requisition_pdf');
     }
@@ -323,7 +316,6 @@ class Purchase extends Base
     {
         header("Content-type:text/html;charset=utf-8");
 
-        $this->datas  = $this->req->param(true);
         $preData   = PurchasePre::get($this->datas['preId']);
         $itemsData = PurchasePreItem::all(['ppid' => $this->datas['preId']]);
 
@@ -447,10 +439,9 @@ class Purchase extends Base
         header("location:http://{$_SERVER['SERVER_NAME']}/template/purchase_pre.pdf");exit;
     }
 
-    # 导出数据
+    # 导出请购单数据
     public function export_data()
     {
-        $this->datas  = $this->req->param(true);
         $preData   = PurchasePre::get($this->datas['preId']);
 
         $isExport = true;
@@ -487,12 +478,148 @@ class Purchase extends Base
         return $this->fetch('purchase/purchase');
     }
 
+    # 采购单数据
+    public function purchase_data()
+    {
+        $where = "1 ";
+        if (isset($this->datas['search'])) {
+            $where.=" and concat(purchase_number,purchase_project,purchaser,phone) like '%{$this->datas['search']}%'";
+        }
+        if (isset($this->datas['startTime']) && !empty($this->datas['startTime'])) {
+            $where.=" and addtime >=".strtotime($this->datas['startTime']);
+        }
+        if (isset($this->datas['endTime']) && !empty($this->datas['endTime'])) {
+            $where.=" and addtime <=".strtotime($this->datas['endTime']);
+        }
+        $page = isset($this->datas['page'])?$this->datas['page']:1;
+        $limit = isset($this->datas['limit'])?$this->datas['limit']:Config::get('paginate.list_rows');
+        $startLimit = ($page-1)*$limit;
+        
+        $PurchaseModel = new PurchaseModel();
+
+        $count = $PurchaseModel->where($where)->count();
+        $list = $PurchaseModel
+            ->field('id,purchase_number,purchase_project,purchaser,phone,remarks,addtime')
+            ->where($where)
+            ->order('id', 'desc')
+            ->limit($startLimit, $limit)
+            ->select();
+        foreach ($list as $k => &$v) {
+            $v['index']    = $k+1;
+            $v['addtime']  = date('Y-m-d H:i:s', $v['addtime']);
+        }
+        return ajaxReturn(0,'success', $list, $count);
+    }
+
     # 采购单创建数据
     public function purchase_add_view()
     {
         $template = "<a href='http://{$_SERVER['SERVER_NAME']}/template/采购单上传模版.xlsx' style='color:#1E9FFF' target='_blank'>采购单模版</a>";
         $this->assign('template', $template);
         return $this->fetch('purchase/purchase_add');
+    }
+
+    # 采购单创建数据保存数据
+    public function purchase_add_data()
+    {
+        $mainData = array(
+            'purchase_project' => $this->datas['purchase_project'],
+            'purchase_number'  => $this->datas['purchase_number'],
+            'purchaser'        => $this->datas['purchaser'],
+            'phone'            => $this->datas['phone'],
+            'remarks'          => $this->datas['remarks'],
+            'addtime'          => time()
+        );
+        
+        $itemsData = $this->datas['itemsData'];
+        foreach ($itemsData as &$v) {
+            if (empty($v)) unset($v);
+        }
+
+        Db::startTrans();
+        try {
+            $PurchaseModel = new PurchaseModel;
+            $PurchaseModel->save($mainData);
+
+            $PurchaseModel = PurchaseModel::find($PurchaseModel->id);
+            $PurchaseModel->items()->saveAll($itemsData);
+
+            Db::commit();
+            return ajaxReturn(0, 'success');
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
+    }
+
+    # 编辑采购单数据
+    public function purchase_edit()
+    {
+        Db::startTrans();
+        try {
+            $PurchaseModel = PurchaseModel::get($this->datas['id']);
+            $newArr = array_keys($this->datas);
+            $data[$newArr[0]] = $this->datas[$newArr[0]];
+            $PurchaseModel->save($data);
+            
+           Db::commit();
+            return ajaxReturn(0, 'success', $newArr);
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
+    }
+
+    # 删除采购单数据
+    public function purchase_del()
+    {
+        Db::startTrans();
+        try {
+            $PurchaseModel = PurchaseModel::get($this->datas['pid']);
+            $PurchaseModel->delete();
+            $PurchaseModel->items()->delete();
+            
+            Db::commit();
+            return ajaxReturn(0, 'success');
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
+    }
+
+    # 采购单items
+    public function purchase_items_view()
+    {
+        $this->assign('pId', $this->datas['pId']);
+        return $this->fetch('purchase/purchase_items'); 
+    }
+
+    # 采购单items 数据
+    public function purchase_items_data()
+    {
+        $data = PurchaseItems::all(['pid' => $this->datas['pId']]);
+        foreach ($data as $k => &$v) {
+            $v['index']    = $k+1;
+        }
+        return ajaxReturn(0,'success', $data);
+    }
+
+    # 编辑采购单items数据
+    public function purchase_items_edit()
+    {
+        Db::startTrans();
+        try {
+            $PurchaseItems = PurchaseItems::get($this->datas['id']);
+            $newArr = array_keys($this->datas);
+            $data[$newArr[0]] = $this->datas[$newArr[0]];
+            $PurchaseItems->save($data);
+            
+           Db::commit();
+            return ajaxReturn(0, 'success', $newArr);
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
     }
 
     # 采购单上传数据

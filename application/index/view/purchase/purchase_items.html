@@ -1,0 +1,147 @@
+<!-- 采购单 -->
+{include file="public/public"/}
+<div class="" style="padding: 10px;"> 
+    <!-- 内容主体区域 -->
+    <div style="padding-bottom: 10px;">
+        <h3>采购单数据</h3>
+    </div>
+    <div class="layui-btn-group demoTable" style="width:100%">
+        <!-- <div style="float:right;">
+            <i class="layui-icon layui-icon-print" id="print" title="打印" style="font-size: 30px; color: #009688;padding: 0 5px 0 5px;cursor: pointer;"></i>  
+        </div>
+        <div style="float:right;">
+            <i class="layui-icon layui-icon-export" id="export" title="导出" style="font-size: 30px; color: #009688;padding: 0 5px 0 5px;cursor: pointer;"></i>  
+        </div>
+        <div style="float:right;">
+            <i class="layui-icon layui-icon-add-1" id="addNew" title="添加一行" style="font-size: 30px; color: #009688;padding: 0 5px 0 5px;cursor: pointer;"></i>  
+        </div> -->
+        
+    </div>
+    <table class="layui-hide" id="purchase_items_data" lay-filter="purchase_items_data"></table>
+    <h6 style="color:#FF5722">注：点击数据即可编辑。</h6>
+    <script type="text/html" id="barDemo">
+        <i class="layui-icon layui-icon-close-fill" lay-event="del" id="delItem" title="删除" style="font-size: 30px; color: #FF5722;padding: 0 5px 0 5px;cursor: pointer;"></i>  
+    </script>
+</div>
+
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+        var $ = layui.$;
+        var myDate = new Date();
+        var mytime=myDate.toLocaleString();
+        table.render({
+            elem: '#purchase_items_data'
+            ,url: domain + '/purchase_items_data?pId='+ {$pId} //数据接口
+            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,totalRow: true
+            // ,toolbar: true
+            ,title: '请购单数据'+mytime
+            ,cols: [
+
+                [
+                    {fixed: 'left', title:'操作', toolbar: '#barDemo', width:70}
+                    ,{field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
+                    ,{field:'purchase_time', title: '采购时间',width:120, edit:'text'}
+                    ,{field:'material', title: '物料明细',width:200, edit:'text'}
+                    ,{field:'brand', title: '牌子',width:120, edit:'text'}
+                    ,{field:'spec', width:120, title: '规格型号', edit:'text'}
+                    ,{field:'unit', width:100, title: '单位', edit:'text'}
+                    ,{field:'qty', title: '数量', width: 100,totalRow: true, edit:'text'}
+                    ,{field:'price', title: '单价(元)',width:150,totalRow: true, edit:'text'}
+                    ,{field:'amount', title: '合计(元)',width:150,totalRow: true, edit:'text'}
+                    ,{field:'remarks', title: '备注',minWidth:150, edit:'text'}
+                ],
+            ]
+        });
+
+        // 数据重载
+        var tableReload = function(params={}) {
+            table.reload('purchase_items_data', {
+                where: params
+                ,page: {
+                    curr: 1
+                }
+            });
+        }
+
+        // 编辑
+        table.on('edit(purchase_items_data)', function(obj){
+           var value = obj.value //得到修改后的值
+           ,data = obj.data //得到所在行所有键值
+           ,field = obj.field; //得到字段
+
+           var json = {};
+           json[field] = value;
+           json['id'] = data.id;
+           $.ajax({
+                type:'put',
+                dataType:'json',
+                url: domain + '/purchase_items_edit',
+                data:json,
+                success:function(res){
+                    if (res.code == 0) {
+                        layer.msg(res.msg, {icon:1,time:1000}, function(){
+                            tableReload();
+                        });
+                    } else {
+                        layer.msg(res.msg, {icon:0});
+                    }
+                }
+           });
+        });
+        
+        // 打印
+        $("#print").click(function(){
+            window.location.href = "/purchase_print_data?pId="+ {$pId};
+        });
+
+        // 导出
+        $("#export").click(function(){
+            window.location.href = "/purchase_export_data?pId="+ {$pId};
+        });
+
+        // 添加一行数据
+        $("#addNew").click(function(){
+            var data = table.cache.purchase_items_data
+            data.push({'purchase_time':'','material':'','brand':'','spec':'','unit':'','qty':'','price':'','amount':'','remarks':''});
+            var pId = {$pId};
+            $.ajax({
+                type:'post',
+                dataType:'json',
+                url: domain + '/purchase_items_add_data',
+                data:{pId:pId},
+                success:function(res){
+                    if (res.code == 0) {
+                        table.reload('purchase_items_data',{
+                            data : data
+                        });
+                    }
+                }
+            });
+        });
+
+        // // 删除
+        table.on('tool(purchase_items_data)', function(obj){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+                $.ajax({
+                    type:'delete',
+                    dataType:'json',
+                    url: domain + '/purchase_items_del_data',
+                    data:{id:obj.data.id},
+                    success:function(res){
+                        if (res.code == 0) {
+                            table.reload('purchase_items_data',{
+                                data : {}
+                            });
+                        }
+                    }
+                });
+            });
+
+        });
+
+    });
+</script>

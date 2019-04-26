@@ -37,8 +37,16 @@ Route::get('purchase_export_data','index/purchase/export_data');
 // 采购单
 Route::get('purchase','index/purchase/purchase_view');
 Route::get('purchase_add','index/purchase/purchase_add_view');
+Route::get('purchase_items','index/purchase/purchase_items_view');
 // 采购单数据
+Route::get('purchase_data','index/purchase/purchase_data');
+Route::post('purchase_add_data','index/purchase/purchase_add_data');
+Route::put('purchase_edit','index/purchase/purchase_edit');
+Route::put('purchase_items_edit','index/purchase/purchase_items_edit');
+Route::delete('purchase_del','index/purchase/purchase_del');
 Route::post('purchase_add_upload','index/purchase/purchase_add_upload');
+
+Route::get('purchase_items_data','index/purchase/purchase_items_data');
 
 // 采购报销单
 Route::get('purchase_expense','index/purchase/purchase_expense_view');
