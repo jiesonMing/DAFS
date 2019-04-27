@@ -1,0 +1,104 @@
+<!-- 入库 -->
+{include file="public/header"/}
+
+{include file="public/menu"/}
+
+<div class="layui-body" style="padding: 10px;"> 
+    <!-- 内容主体区域 -->
+    <div>
+        <span class="layui-breadcrumb">
+            <a href="/">首页</a>
+            <a><cite>入库</cite></a>
+        </span>
+    </div>
+
+    <hr class="layui-bg-gray">
+    
+    <div class="demoTable">
+        <div class="layui-inline">
+          <input class="layui-input" placeholder="搜索..." name="search" id="searchValue" autocomplete="off" style="width: 240px">
+        </div>
+        <button class="layui-btn" data-type="reload" id="search">搜索</button>
+
+        <div class="layui-inline" style="padding-left: 20px ">
+            <input type="text" class="layui-input startTime" placeholder="开始时间">
+        </div>
+        <div class="layui-inline">
+            <input type="text" class="layui-input endTime" placeholder="结束时间">
+        </div>
+        
+        <button class="layui-btn" style="float: right;">
+            <a href="/purchase_operate"><i class="layui-icon">&#xe608;</i> 新建入库</a>
+        </button>
+
+        <div id="progress" class="layui-progress layui-progress-big" lay-showpercent="true" lay-filter="demo">
+            <div class="layui-progress-bar layui-bg-red" lay-percent="0%"></div>
+        </div>
+        <div class="site-demo-button" style="margin-top: 20px; margin-bottom: 0;">
+            <button class="layui-btn site-demo-active" data-type="loading">模拟loading</button>
+        </div>
+               
+        <!-- 示例-970 -->
+        <ins class="adsbygoogle" style="display:inline-block;width:970px;height:90px" data-ad-client="ca-pub-6111334333458862" data-ad-slot="3820120620"></ins>
+           
+    </div>
+
+    <!-- <table class="layui-table" id="purchase_requisition_data" lay-filter="purchase_requisition_data"></table> -->
+    <!-- <h6 style="color:#FF5722">注：查看数据内容可编辑、导出、打印。</h6> -->
+
+    <script type="text/html" id="operateBar">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看</a>
+        <a class="layui-btn layui-btn-success layui-btn-xs" lay-event="uploadpdf"><i class="layui-icon layui-icon-upload"></i>上传扫描件</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
+    </script>
+
+</div>
+{include file="public/footer"/}
+
+<script>
+layui.use(['table', 'laydate','element'], function(){
+    var $ = layui.jquery
+    ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+    
+    //触发事件
+    var active = {
+        loading: function(othis){
+        //模拟loading
+        var n = 0, timer = setInterval(function(){
+        n = n + Math.random()*50|0;  
+        if(n>100){
+            n = 100;
+            clearInterval(timer);
+            othis.removeClass(DISABLED);
+        }
+        element.progress('demo', n+'%');
+        }, 300);
+        
+        othis.addClass(DISABLED);
+        }
+    };
+    
+    $('.site-demo-active').on('click', function(){
+        var othis = $(this), type = $(this).data('type');
+        active[type] ? active[type].call(this, othis) : '';
+    });
+
+    var othis = $(this), type = $(this).data('type');
+        active[type] ? active[type].call(this, othis) : '';
+    layer.open({
+        type: 1, //类型，解析url
+        closeBtn: 0, //关闭按钮是否显示 1显示0不显示
+        title: '', //页面标题
+        shade: 0.5,  //遮罩透明度
+        area: ['85%', '10px'],  //弹出层页面比例
+        content: $("#progress"),
+        success:function(){
+            var othis = $(this), type = $(this).data('type');
+            active[type] ? active[type].call(this, othis) : '';
+        }
+    });
+    
+});
+</script>
+
+

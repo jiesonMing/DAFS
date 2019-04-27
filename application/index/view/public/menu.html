@@ -28,11 +28,20 @@
           </dl>
         </li>
 
-        <li class="layui-nav-item">
+        <li class="layui-nav-item layui-nav-itemed">
           <a href="javascript:;"><i class="fa fa-home"></i> 仓库管理</a>
           <dl class="layui-nav-child">
-            <dd><a href="javascript:;">入库</a></dd>
-            <dd><a href="javascript:;">出库</a></dd>
+              {if condition="($nav == 'inwarehouse_view' or $nav == 'inwarehouse_add' or $nav == 'inwarehouse_items_view') "}
+                  <dd><a href="/inwarehouse" class="layui-this">入库</a></dd>
+              {else /}
+                  <dd><a href="/inwarehouse">入库</a></dd>
+              {/if}
+
+              {if condition="($nav == 'outwarehouse_view' or $nav == 'outwarehouse_add' or $nav == 'outwarehouse_items_view') "}
+                  <dd><a href="javascript:;" class="layui-this">出库</a></dd>
+              {else /}
+                  <dd><a href="javascript:;">出库</a></dd>
+              {/if}
           </dl>
         </li>
 

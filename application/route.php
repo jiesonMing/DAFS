@@ -33,7 +33,6 @@ Route::put('purchase_requisition_items_edit','index/purchase/purchase_requisitio
 Route::delete('purchase_requisition_del','index/purchase/purchase_requisition_del');
 Route::get('purchase_print_data','index/purchase/print_data');
 Route::get('purchase_export_data','index/purchase/export_data');
-
 // 采购单
 Route::get('purchase','index/purchase/purchase_view');
 Route::get('purchase_add','index/purchase/purchase_add_view');
@@ -46,11 +45,18 @@ Route::put('purchase_edit','index/purchase/purchase_edit');
 Route::put('purchase_items_edit','index/purchase/purchase_items_edit');
 Route::delete('purchase_del','index/purchase/purchase_del');
 Route::post('purchase_upload','index/purchase/purchase_upload_data');
-
 Route::get('purchase_items_data','index/purchase/purchase_items_data');
 Route::post('purchase_items_add_data','index/purchase/purchase_items_add_data');
 Route::delete('purchase_items_del_data','index/purchase/purchase_items_del_data');
 Route::get('purchase_print','index/purchase/purchase_print_data');
-
 // 采购报销单
 Route::get('purchase_expense','index/purchase/purchase_expense_view');
+
+
+/*
+* 仓库管理
+*/
+// 入库
+Route::get('inwarehouse','index/warehouse/inwarehouse_view');
+
+
