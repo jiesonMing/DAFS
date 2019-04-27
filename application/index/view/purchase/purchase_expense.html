@@ -5,9 +5,15 @@
 
 <div class="layui-body" style="padding: 10px;"> 
     <!-- 内容主体区域 -->
-    <div style="padding-bottom: 10px;">
-        <h3>采购报销单</h3>
+    <div>
+        <span class="layui-breadcrumb">
+            <a href="/">首页</a>
+            <a><cite>采购报销单</cite></a>
+        </span>
     </div>
+
+    <hr class="layui-bg-gray">
+    
     <div class="demoTable">
         <div class="layui-inline">
           <input class="layui-input" placeholder="搜索..." name="search" id="searchValue" autocomplete="off" style="width: 240px">
@@ -21,17 +27,16 @@
             <input type="text" class="layui-input endTime" placeholder="结束时间">
         </div>
         
-        <button class="layui-btn" style="float: right;">
+        <!-- <button class="layui-btn" style="float: right;">
             <a href="javascript:;"><i class="layui-icon">&#xe608;</i> 创建</a>
-        </button>
+        </button> -->
            
     </div>
 
     <table class="layui-table" id="purchase_expense_data" lay-filter="purchase_expense_data"></table>
 
     <script type="text/html" id="operateBar">
-        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看</a>
-        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
+        <a class="layui-btn layui-btn-success layui-btn-xs" lay-event="uploadpdf"><i class="layui-icon layui-icon-upload"></i>上传扫描件</a>
     </script>
 
 </div>
@@ -41,17 +46,19 @@
     layui.use(['table', 'laydate'], function(){
         var table = layui.table;
         var laydate = layui.laydate;
+        var $ = layui.$;
         // 请购单数据
         table.render({
             elem: '#purchase_expense_data'
-            ,url: domain + '/purchase_expense_data' //数据接口
+            ,url: domain + '/purchase_data' //数据接口
             ,page: true //开启分页
             ,cols: [[ //表头
             {field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
-            ,{field: 'purchase_code', title: '采购报销单编号', width:200, edit: 'text'}
-            ,{field: 'filepath', title: '文件名',minWidth:250}
-            ,{field: 'remarks', title: '备注', edit: 'text'} 
+            ,{field: 'purchase_number', title: '采购编号', width:200}
+            ,{field: 'pdfpath', title: '扫描件',minWidth:250}
+            ,{field: 'pdfremarks', title: '备注', edit: 'text'} 
             ,{field: 'addtime', title: '创建日期', width: 178,minWidth:100,sort: true}
+            ,{field: 'uploadtime', title: '上传日期', width: 178,minWidth:100,sort: true}
             ,{title: '操作', fixed: 'right', width:178, align:'center', toolbar: '#operateBar'}
             ]]
         });
@@ -66,69 +73,20 @@
             });
         }
 
-        // 查看、删除
-        table.on('tool(purchase_expense_data)', function(obj){
-            var data = obj.data;
-            if(obj.event === 'detail'){
-                layer.open({
-                    type: 2, //类型，解析url
-                    closeBtn: 1, //关闭按钮是否显示 1显示0不显示
-                    title: '', //页面标题
-                    shade: 0.6,  //遮罩透明度
-                    area: ['80%', '70%'],  //弹出层页面比例
-                    content: '/purchase_requisition_items?preId='+data.id //弹出层的url
-                });
-            } else if(obj.event === 'del'){
-                layer.confirm('真的删除行么', function(index){
-                    $.ajax({
-                        type:'delete',
-                        dataType:'json',
-                        url: domain + '/purchase_requisition_del',
-                        data:{pid:data.id},
-                        success:function(res){
-                            if (res.code == 0) {
-                                obj.del();
-                                layer.msg(res.msg, {icon:1,time:1000}, function(){
-                                    tableReload();
-                                });
-                            } else {
-                                layer.msg(res.msg, {icon:0});
-                            }
-                            layer.close(index);
-                        }
-                    });
-                    
-                });
-            }
-        });
-
-        var $ = layui.$, active = {
-            getCheckData: function(){ //获取选中数据
-            var checkStatus = table.checkStatus('idTest')
-            ,data = checkStatus.data;
-            layer.alert(JSON.stringify(data));
-            }
-            ,getCheckLength: function(){ //获取选中数目
-            var checkStatus = table.checkStatus('idTest')
-            ,data = checkStatus.data;
-            layer.msg('选中了：'+ data.length + ' 个');
-            }
-            ,isAll: function(){ //验证是否全选
-            var checkStatus = table.checkStatus('idTest');
-            layer.msg(checkStatus.isAll ? '全选': '未全选')
-            }
-        };
-
         // 编辑
         table.on('edit(purchase_expense_data)', function(obj){
             var value = obj.value //得到修改后的值
-            ,data = obj.data //得到所在行所有键值
-            ,field = obj.field; //得到字段
+           ,data = obj.data //得到所在行所有键值
+           ,field = obj.field; //得到字段
+
+           var json = {};
+           json[field] = value;
+           json['id'] = data.id;
             $.ajax({
                 type:'put',
                 dataType:'json',
-                url: domain + '/purchase_requisition_edit',
-                data:{pid:data.id, purchase_code:value, remarks:data.remarks},
+                url: domain + '/purchase_edit',
+                data:json,
                 success:function(res){
                     if (res.code == 0) {
                         layer.msg(res.msg, {icon:1,time:1000}, function(){
@@ -139,6 +97,21 @@
                     }
                 }
             });
+        });
+
+        // 上传
+        table.on('tool(purchase_expense_data)', function(obj){
+            var data = obj.data;
+            if (obj.event === 'uploadpdf') {
+                layer.open({
+                    type: 2, //类型，解析url
+                    closeBtn: 1, //关闭按钮是否显示 1显示0不显示
+                    title: '', //页面标题
+                    shade: 0.6,  //遮罩透明度
+                    area: ['40%', '35%'],  //弹出层页面比例
+                    content: '/purchase_pdf?pId='+data.id //弹出层的url
+                });
+            }
         });
 
         $('.demoTable #search').on('click', function(){

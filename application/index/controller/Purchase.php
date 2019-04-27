@@ -499,14 +499,16 @@ class Purchase extends Base
 
         $count = $PurchaseModel->where($where)->count();
         $list = $PurchaseModel
-            ->field('id,purchase_number,purchase_project,purchaser,phone,remarks,addtime')
+            ->field('id,purchase_number,purchase_project,purchaser,phone,remarks,addtime,uploadtime,pdfname,pdfpath,pdfremarks')
             ->where($where)
             ->order('id', 'desc')
             ->limit($startLimit, $limit)
             ->select();
         foreach ($list as $k => &$v) {
-            $v['index']    = $k+1;
-            $v['addtime']  = date('Y-m-d H:i:s', $v['addtime']);
+            $v['index']      = $k+1;
+            $v['addtime']    = date('Y-m-d H:i:s', $v['addtime']);
+            $v['uploadtime'] = date('Y-m-d H:i:s', $v['uploadtime']);
+            $v['pdfpath']    = "<a href='http://{$_SERVER['SERVER_NAME']}{$v['pdfpath']}' target='_blank' style='color:#1E9FFF'>{$v['pdfname']}</a>";
         }
         return ajaxReturn(0,'success', $list, $count);
     }
@@ -637,6 +639,51 @@ class Purchase extends Base
         $items = PurchaseItems::get($this->datas['id']);
         $items->delete();
         return ajaxReturn(0, 'success');
+    }
+
+    # 上传扫描件view
+    public function purchase_pdf_view()
+    {
+        $this->assign('pid', $this->datas['pId']);
+        return $this->fetch('purchase/purchase_pdf');
+    }
+
+    # 上传扫描件data
+    public function purchase_upload_data()
+    {
+        $pid = isset($this->datas['pid'])?$this->datas['pid']:'';
+        require_once EXTEND_PATH."export/PHPExcel.php";
+        $objPHPExcel = new \PHPExcel();
+        // 获取表单上传文件
+        $file = request()->file('file');
+        $filename_old = $_FILES['file']['name'];
+        $date = date('Ymd', time());
+        // $info = $file->validate(['ext' => 'xlsx,xls,pdf'])->move(ROOT_PATH . 'public' . DS . 'uploads'. DS .$date, iconv("UTF-8","gb2312", $filename1));
+        $info = $file->validate(['ext' => 'pdf'])->move(ROOT_PATH . 'public' . DS . 'uploads');
+        // 数据为空返回错误
+        if( empty($info) ){
+            return ajaxReturn(-1, '导入数据失败');
+        }
+        // 获取文件名
+        $exclePath = $info->getSaveName();
+        // 上传文件的地址
+        $filename = ROOT_PATH . 'public' . DS . 'uploads'. DS . $exclePath;
+        $extension = strtolower( pathinfo($filename, PATHINFO_EXTENSION) );
+        $filepath = DS . 'uploads'. DS . $exclePath;
+        // 把数据插入数据表
+        Db::startTrans();
+        try {
+            $PurchaseModel = PurchaseModel::get($pid);
+            $PurchaseModel->pdfname = $filename_old;
+            $PurchaseModel->pdfpath = $filepath;
+            $PurchaseModel->uploadtime = time();
+            $PurchaseModel->save();
+            Db::commit();
+            return ajaxReturn(0, 'success');
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
     }
 
     #采购单打印数据

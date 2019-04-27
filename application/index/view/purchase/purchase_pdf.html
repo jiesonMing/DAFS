@@ -1,0 +1,44 @@
+{include file="public/public"/}
+<div class="" style="padding: 10px;"> 
+    <!-- 内容主体区域 -->
+    <div style="padding-bottom: 10px;">
+        <h>上传扫描件</h3>
+    </div>
+    <br/>
+    <div class="layui-upload">
+        <button type="button" class="layui-btn layui-btn-normal" id="pdfFile">选择文件</button><br/><br/><br/>
+        <button type="button" class="layui-btn" id="startUpload">开始上传</button>
+    </div>
+    <br/>
+    <h6 style="color:#FF5722">注：只能上传pdf文件格式。</h6>
+</div>
+
+<script>
+ layui.use('upload', function(){
+    var $ = layui.jquery
+    ,upload = layui.upload;
+    var pid = {$pid};
+    upload.render({
+        elem: '#pdfFile'
+        ,url: '/purchase_upload'
+        ,auto: false
+        ,accept: 'file'
+        ,exts: 'pdf' 
+        ,data:{pid:pid}
+        //,multiple: true
+        ,bindAction: '#startUpload'
+        ,done: function(res){
+            if(res.code == 0){ //上传成功
+                layer.msg(res.msg, {icon:1,time:1000},function() {
+                    parent.window.location.href='/purchase_expense';
+                    layer.closeAll();
+                });
+            } else {
+                layer.msg(res.msg, {icon:0});
+            }
+        }
+    });
+ });
+</script>
+
+
