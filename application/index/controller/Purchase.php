@@ -653,14 +653,15 @@ class Purchase extends Base
         <b style='border-bottom: 1px solid black;padding: 2px;'>釆购报销单明细表</b> </h2>";
         $div .= "<table border='1' width='800' style='border-collapse: collapse; text-align:center;font-size:24px'>";
 
+        $style = "style='border:0px solid white;text-align:left;'";
         $div .= "<tr>";
-        $div .= "<td colspan='4' height='60' style='text-align:left;'>采购项目部：{$purchaseData->purchase_project}</td>
-        <td colspan='3' style='text-align:left;'>采购员：{$purchaseData->purchaser}</td>
-        <td colspan='4' style='text-align:left;'>联系电话：{$purchaseData->phone}</td>";
+        $div .= "<td colspan='4' height='60' {$style}>采购项目部：{$purchaseData->purchase_project}</td>
+        <td colspan='3' {$style}>采购员：{$purchaseData->purchaser}</td>
+        <td colspan='4' {$style}>联系电话：{$purchaseData->phone}</td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='11' height='80' style='text-align:left;'>注：{$purchaseData->remarks} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        $div .= "<td colspan='11' height='80' {$style}>注：{$purchaseData->remarks} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$purchaseData->purchase_number}</td>";
         $div .= "</tr>";
 
