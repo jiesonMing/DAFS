@@ -14,10 +14,69 @@
         <blockquote class="layui-elem-quote">
         为莹莹专门打造的工作管理系统
         </blockquote>
-        
-        <br><br>
-        <h3>Welcome here!</h3>
+
+        <div style="padding: 20px; background-color: #F2F2F2;">
+            <div class="layui-row layui-col-space15">
+              <div class="layui-col-md4" style="min-width:465px">
+                <div class="layui-card">
+                  <div class="layui-card-header"><h2>与莹莹在一起已经</h2></div>
+                  <div class="layui-card-body">
+                    
+                    <p style="padding:60px 10px;">
+                        <span style="font-size:42px;" id="t_day">365</span>
+                        <span style="font-size:26px;padding:0 4px 0 4px;">天</span>
+
+                        <span style="font-size:42px;" id="t_hour">24</span>
+                        <span style="font-size:26px;padding:0 4px 0 4px;">小时</span>
+
+                        <span style="font-size:42px;" id="t_min">10</span>
+                        <span style="font-size:26px;padding:0 4px 0 4px;">分</span>
+
+                        <span style="font-size:42px;" id="t_sec">10</span>
+                        <span style="font-size:26px;padding:0 4px 0 4px;">秒</span>
+                    </p>
+                    <p style="text-align:right;">从 2019-01-01 开始</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> 
     </div>
 </div>
 
 {include file="public/footer"/}
+
+<script>
+layui.use(['table', 'laydate'], function(){
+    var table = layui.table;
+    var laydate = layui.laydate;
+    var $ = layui.$;
+
+    function calculate_time()
+    {
+        var date1= '2019/01/01 00:00:00';  //开始时间
+        var date2 = new Date();    //结束时间
+        var date3 = date2.getTime() - new Date(date1).getTime();   //时间差的毫秒数      
+        //------------------------------
+        //计算出相差天数
+        var days=Math.floor(date3/(24*3600*1000))
+
+        //计算出小时数
+        var leave1=date3%(24*3600*1000)    //计算天数后剩余的毫秒数
+        var hours=Math.floor(leave1/(3600*1000))
+        //计算相差分钟数
+        var leave2=leave1%(3600*1000)        //计算小时数后剩余的毫秒数
+        var minutes=Math.floor(leave2/(60*1000))
+        //计算相差秒数
+        var leave3=leave2%(60*1000)      //计算分钟数后剩余的毫秒数
+        var seconds=Math.round(leave3/1000)
+
+        $('#t_day').text(days);
+        $('#t_hour').text(hours);
+        $('#t_min').text(minutes);
+        $('#t_sec').text(seconds);
+    }
+    setInterval(calculate_time,1000);
+
+});
+</script>
