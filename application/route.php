@@ -60,3 +60,13 @@ Route::get('purchase_expense','index/purchase/purchase_expense_view');
 Route::get('inwarehouse','index/warehouse/inwarehouse_view');
 
 
+/*
+* 车辆管理
+*/
+// 车辆维修
+Route::get('car','index/car/car_view');
+Route::get('car_data','index/car/car_data');
+Route::put('car_edit','index/car/car_edit');
+Route::get('car_add','index/car/car_add_view');
+Route::post('car_add_data','index/car/car_add_data');
+

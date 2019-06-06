@@ -1,0 +1,140 @@
+<!-- 车辆管理 -->
+{include file="public/header"/}
+
+{include file="public/menu"/}
+
+<div class="layui-body" style="padding: 10px;"> 
+    <!-- 内容主体区域 -->
+    <div>
+        <span class="layui-breadcrumb">
+            <a href="/">首页</a>
+            <a><cite>车辆维修</cite></a>
+        </span>
+    </div>
+
+    <hr class="layui-bg-gray">
+
+    <div class="demoTable">
+        <div class="layui-inline">
+            <input class="layui-input" placeholder="搜索..." name="search" id="searchValue" autocomplete="off" style="width: 240px">
+        </div>
+        <button class="layui-btn" data-type="reload" id="search">搜索</button>
+
+        <div class="layui-inline" style="padding-left: 20px ">
+            <input type="text" class="layui-input startTime" placeholder="开始时间">
+        </div>
+        <div class="layui-inline">
+            <input type="text" class="layui-input endTime" placeholder="结束时间">
+        </div>
+        
+        <button class="layui-btn" style="float: right;">
+            <a href="/car_add"><i class="layui-icon">&#xe608;</i> 创建</a>
+        </button>
+    </div>
+
+    <table class="layui-table" id="car_data" lay-filter="car_data"></table>
+    <h6 style="color:#FF5722">注：点击数据内容可编辑。</h6>
+
+    <script type="text/html" id="operateBar">
+        <!-- <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看</a> -->
+        <!-- <a class="layui-btn layui-btn-success layui-btn-xs" lay-event="uploadpdf"><i class="layui-icon layui-icon-upload"></i>上传扫描件</a> -->
+        <!-- <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a> -->
+    </script>
+
+</div>
+
+{include file="public/footer"/}
+
+<script>
+    layui.use(['table', 'laydate'], function(){
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var $ = layui.$;
+        // 请购单数据
+        table.render({
+            elem: '#car_data'
+            ,url: domain + '/car_data' //数据接口
+            ,page: true //开启分页
+            ,cols: [[ //表头
+            {field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
+            ,{field: 'car_number', title: '车牌号', edit: 'text'}
+            ,{field: 'mileage', title: '保养公里数',edit: 'text', sort: true}
+            ,{field: 'maintenance_situation', title: '维修情况',edit: 'text'} 
+            ,{field: 'car_time', title: '时间',edit:'text', sort: true}
+            ,{field: 'amount', title: '金额',edit:'text', sort: true}
+            ,{field: 'nianjian_time', title: '年检时间',edit:'text', sort: true}
+            ,{field: 'next_nianjian_time', title: '下次年检时间',edit:'text', sort: true}
+            ,{field: 'insurance_time', title: '保险时间',edit: 'text', sort: true}
+            ,{field: 'next_insurance_time', title: '下次保险时间',edit:'text', sort: true}
+            ,{field: 'addtime', title: '添加时间'}
+            // ,{title: '操作', fixed: 'right',align:'center', toolbar: '#operateBar'}
+            ]]
+        });
+
+        // 数据重载
+        var tableReload = function(params={}) {
+            table.reload('car_data', {
+                where: params
+                ,page: {
+                    curr: 1
+                }
+            });
+        }
+
+        var $ = layui.$;
+
+        // 编辑
+        table.on('edit(car_data)', function(obj){
+            var value = obj.value //得到修改后的值
+           ,data = obj.data //得到所在行所有键值
+           ,field = obj.field; //得到字段
+
+           var json = {};
+           json[field] = value;
+           json['id'] = data.id;
+            $.ajax({
+                type:'put',
+                dataType:'json',
+                url: domain + '/car_edit',
+                data:json,
+                success:function(res){
+                    if (res.code == 0) {
+                        layer.msg(res.msg, {icon:1,time:1000}, function(){
+                            tableReload();
+                        });
+                    } else {
+                        layer.msg(res.msg, {icon:0});
+                    }
+                }
+            });
+        });
+
+        $('.demoTable #search').on('click', function(){
+            var search = $('#searchValue').val();
+            tableReload({'search': search});
+        });
+
+        // enter
+        $("body").keydown(function() {
+            if (event.keyCode == "13") {
+                $('.demoTable #search').click();
+            }
+        });
+
+        // 时间
+        laydate.render({
+            elem: '.startTime', //指定元素
+            type: 'datetime',
+            done: function(value, date, endDate){
+                tableReload({'startTime': value});
+            }
+        });
+        laydate.render({
+            elem: '.endTime', //指定元素
+            type: 'datetime',
+            done: function(value, date, endDate){
+                tableReload({'endTime': value});
+            }
+        });
+    });
+</script>
