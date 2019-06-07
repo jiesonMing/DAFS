@@ -1,0 +1,107 @@
+<!-- 车辆用油情况 -->
+<!-- 车辆用油情况创建数据 -->
+{include file="public/header"/}
+
+{include file="public/menu"/}
+
+<div class="layui-body" style="padding: 10px;"> 
+    <!-- 内容主体区域 -->
+    <div>
+        <span class="layui-breadcrumb">
+          <a href="/">首页</a>
+          <a href="/caroil">车辆用油情况</a>
+          <a><cite>创建车辆用油情况数据</cite></a>
+        </span>
+    </div>
+    <hr class="layui-bg-gray">
+
+        <blockquote class="layui-elem-quote"><i class="red">*</i> 为必填选项。</blockquote>
+        <form class="layui-form"> 
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i class="red">*</i>油卡号：</label>
+                <div class="layui-input-block">
+                <input type="text" name="caroil_number" lay-verify="required" autocomplete="off" placeholder="油卡号" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i class="red">*</i>车牌号：</label>
+                <div class="layui-input-block">
+                <input type="text" name="car_number" lay-verify="required" autocomplete="off" placeholder="车牌号" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i class="red">*</i>使用人：</label>
+                <div class="layui-input-block">
+                <input type="text" name="user" lay-verify="required" autocomplete="off" placeholder="使用人" class="layui-input car_time">
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i class="red">*</i>加油时间：</label>
+                <div class="layui-input-block">
+                    <input type="tel" name="oil_add_time" lay-verify="required" autocomplete="off" placeholder="加油时间" class="layui-input car_add_time">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i class="red">*</i>加油金额：</label>
+                <div class="layui-input-block">
+                <input type="tel" name="oil_amount" lay-verify="required|number" autocomplete="off" placeholder="加油金额" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="caroil_form">确认保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+      </div>
+    </div> 
+</div>
+{include file="public/footer"/}
+
+<script>
+  layui.use(['upload','form','table','laydate'], function(){
+    var $ = layui.jquery
+    ,form = layui.form
+    ,laydate = layui.laydate;
+
+    //监听提交
+    form.on('submit(caroil_form)', function(data){
+      var data = data.field;
+      $.ajax({
+        type:'post',
+        dataType:'json',
+        data: data,
+        url:'/caroil_add_data',
+        success:function(res){
+          if (res.code == 0) {
+                layer.msg(res.msg, {icon:1,time:1000},function() {
+                    window.location.href = "/caroil";
+                });
+          } else {
+            layer.msg(res.msg, {icon:0});
+          }
+        },error:function(){
+          layer.msg('网络错误，稍后重试！', {icon:0});
+        }
+      });
+      return false;
+    });
+
+    // 时间
+    laydate.render({
+        elem: '.car_add_time', //指定元素
+        type: 'date',
+        done: function(value, date, endDate){
+            tableReload({'car_add_time': value});
+        }
+    });
+    
+  });
+</script>

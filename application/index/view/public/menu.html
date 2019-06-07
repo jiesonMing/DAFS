@@ -54,8 +54,15 @@
                 {else /}
                     <dd><a href="/car">车辆维修</a></dd>
                 {/if}
+
                 <dd><a href="javascript:;" class="oil_card">车辆油卡分配</a></dd>
-                <dd><a href="javascript:;">车辆用油情况</a></dd>
+
+                {if condition="($nav == 'caroil_view' or $nav == 'caroil_add_view' ) "}
+                    <dd><a href="/caroil" class="layui-this">车辆用油情况</a></dd>
+                {else /}
+                    <dd><a href="/caroil">车辆用油情况</a></dd>
+                {/if}
+
                 <dd><a href="javascript:;">发电机油卡充值</a></dd>
                 <dd><a href="javascript:;">发电机用油情况</a></dd>
             </dl>
