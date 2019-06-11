@@ -65,9 +65,12 @@ Route::get('inwarehouse','index/warehouse/inwarehouse_view');
 */
 // 车辆维修
 Route::get('car','index/car/car_view');
+Route::get('car_detail','index/car/car_detail_view');
 Route::get('car_data','index/car/car_data');
+Route::get('car_number','index/car/car_number');
 Route::put('car_edit','index/car/car_edit');
 Route::get('car_add','index/car/car_add_view');
+Route::post('car_add','index/car/car_add');
 Route::post('car_add_data','index/car/car_add_data');
 
 // 车辆用油情况

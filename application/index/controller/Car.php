@@ -23,6 +23,16 @@ class Car extends Base
     {
         return $this->fetch('car/car');
     }
+    
+    // 车辆维修详情
+    public function car_detail_view()
+    {
+        $carid = $this->datas['carid'];
+        $res = Db::name('car_number')->where('id', $carid)->find();
+        $this->assign('car_number', $res['car_number']);
+        $this->assign('carid', $res['id']);
+        return $this->fetch('car/car_detail');
+    }
 
     // 车辆维修数据
     public function car_data()
@@ -50,7 +60,7 @@ class Car extends Base
             ->select();
         foreach ($list as $k => &$v) {
             $v['index']    = $k+1;
-            $v['car_time'] = date('Y-m-d', strtotime($v['car_time']));
+            $v['maintenance_time'] = date('Y-m-d', strtotime($v['maintenance_time']));
             $v['nianjian_time'] = date('Y-m-d', strtotime($v['nianjian_time']));
             $v['next_nianjian_time'] = date('Y-m-d', strtotime($v['next_nianjian_time']));
             $v['insurance_time'] = date('Y-m-d', strtotime($v['insurance_time']));
@@ -63,22 +73,83 @@ class Car extends Base
     // 添加车辆维修view
     public function car_add_view()
     {
+        $carid = $this->datas['carid'];
+        $res = Db::name('car_number')->where('id', $carid)->find();
+        $this->assign('car_number', $res['car_number']);
+        $this->assign('carid', $res['id']);
         return $this->fetch('car/car_add');
+    }
+
+    public function car_number()
+    {
+        $where = '1 ';
+        if (isset($this->datas['search'])) {
+            $where.=" and concat(car_number,car_area) like '%{$this->datas['search']}%'";
+        }
+        if (isset($this->datas['startTime']) && !empty($this->datas['startTime'])) {
+            $where.=" and addtime >=".strtotime($this->datas['startTime']);
+        }
+        if (isset($this->datas['endTime']) && !empty($this->datas['endTime'])) {
+            $where.=" and addtime <=".strtotime($this->datas['endTime']);
+        }
+        $page = isset($this->datas['page'])?$this->datas['page']:1;
+        $limit = isset($this->datas['limit'])?$this->datas['limit']:Config::get('paginate.list_rows');
+        $startLimit = ($page-1)*$limit;
+
+        $count = Db::name('car_number')->where($where)->count();
+        $list = Db::name('car_number')
+            ->field('*')
+            ->where($where)
+            ->order('id', 'desc')
+            ->limit($startLimit, $limit)
+            ->select();
+        foreach ($list as $k => &$v) {
+            $v['index']    = $k+1;
+            $v['addtime'] = date('Y-m-d H:i:s', $v['addtime']);
+        }
+        return ajaxReturn(0,'success', $list, $count);
+    }
+
+    // 保存添加车牌号
+    public function car_add()
+    {
+        $bool = Db::name('car_number')->where('car_number', $this->datas['car_number'])->find();
+        if ($bool) {
+            return ajaxReturn(-1, '该车牌号：'.$this->datas['car_number'].' 已存在');
+        }
+        $data = array(
+            'car_number'            => $this->datas['car_number'],
+            'car_area'              => $this->datas['car_area'],
+            'addtime'               => time()
+        );
+        
+
+        Db::startTrans();
+        try {
+            Db::name('car_number')->insert($data);
+
+            Db::commit();
+            return ajaxReturn(0, 'success');
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
     }
 
     // 保存添加的数据
     public function car_add_data()
     {
         $data = array(
-            'car_number'            => $this->datas['car_number'],
+            'car_id'                => $this->datas['car_id'],
             'mileage'               => $this->datas['mileage'],
-            'car_time'              => $this->datas['car_time'],
             'amount'                => $this->datas['amount'],
             'nianjian_time'         => $this->datas['nianjian_time'],
             'next_nianjian_time'    => $this->datas['next_nianjian_time'],
             'insurance_time'        => $this->datas['insurance_time'],
             'next_insurance_time'   => $this->datas['next_insurance_time'],
             'maintenance_situation' => $this->datas['maintenance_situation'],
+            'maintenance_time'      => $this->datas['maintenance_time'],
+            'remarks'               => $this->datas['remarks'],
             'addtime'               => time()
         );
 

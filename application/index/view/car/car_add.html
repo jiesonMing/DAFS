@@ -20,7 +20,8 @@
             <div class="layui-form-item">
                 <label class="layui-form-label"><i class="red">*</i>车牌号：</label>
                 <div class="layui-input-block">
-                <input type="text" name="car_number" lay-verify="required" autocomplete="off" placeholder="车牌号" class="layui-input">
+                <input type="text" name="car_number" value="{$car_number}" disabled autocomplete="off" placeholder="车牌号" class="layui-input">
+                <input type="hidden" name="car_id" value="{$carid}">
                 </div>
             </div>
 
@@ -31,15 +32,22 @@
                 </div>
             </div>
 
-            <div class="layui-form-item">
-                <label class="layui-form-label"><i class="red">*</i>时间：</label>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">更换零件：</label>
                 <div class="layui-input-block">
-                <input type="text" name="car_time" lay-verify="required" autocomplete="off" placeholder="时间" class="layui-input car_time">
+                    <input type="text" name="maintenance_situation" lay-verify="required" autocomplete="off" placeholder="更换零件" class="layui-input">
                 </div>
             </div>
 
             <div class="layui-form-item">
-                <label class="layui-form-label"><i class="red">*</i>金额：</label>
+                <label class="layui-form-label"><i class="red">*</i>更换零件时间：</label>
+                <div class="layui-input-block">
+                <input type="text" name="maintenance_time" lay-verify="required" autocomplete="off" placeholder="时间" class="layui-input maintenance_time">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label"><i class="red">*</i>更换零件金额（元）：</label>
                 <div class="layui-input-block">
                 <input type="tel" name="amount" lay-verify="required|number" autocomplete="off" placeholder="金额" class="layui-input">
                 </div>
@@ -74,9 +82,9 @@
             </div>
 
             <div class="layui-form-item layui-form-text">
-                <label class="layui-form-label">维修情况：</label>
+                <label class="layui-form-label">备注：</label>
                 <div class="layui-input-block">
-                <textarea placeholder="维修情况" class="layui-textarea" name="maintenance_situation"></textarea>
+                <textarea placeholder="备注" class="layui-textarea" name="remarks"></textarea>
                 </div>
             </div>
 
@@ -117,7 +125,7 @@
         success:function(res){
           if (res.code == 0) {
                 layer.msg(res.msg, {icon:1,time:1000},function() {
-                    window.location.href = "/car";
+                    window.location.href = "/car_detail?carid="+'{$carid}';
                 });
           } else {
             layer.msg(res.msg, {icon:0});
@@ -137,10 +145,10 @@
 
     // 时间
     laydate.render({
-        elem: '.car_time', //指定元素
+        elem: '.maintenance_time', //指定元素
         type: 'date',
         done: function(value, date, endDate){
-            tableReload({'car_time': value});
+            tableReload({'maintenance_time': value});
         }
     });
     laydate.render({
