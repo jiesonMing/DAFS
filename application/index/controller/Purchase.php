@@ -322,7 +322,7 @@ class Purchase extends Base
         // 组装数据
         $div = "<div>";
         $div .= "<h2 style='text-align:center;'>
-        <b style='border-bottom: 1px solid black;padding: 2px;'>{$preData->title}</b> 项目工程 请 购 单</h2>";
+        <b style='border-bottom: 1px solid black;padding: 2px;'>{$preData->title}</b> 项目工程 申 购 单</h2>";
         $div .= "<table border='1' width='800' style='border-collapse: collapse; text-align:center;font-size:24px'>";
         $div .= "<tr>";
         $div .= "<td width='60' height='58'>序号</td><td width='180'>拟采购物品名称</td><td width='100'>规格</td>
@@ -402,7 +402,7 @@ class Purchase extends Base
         $div .= "</tr>";
 
         $div .= "<tr>";
-        $div .= "<td colspan='10' height='38' style='text-align:left;font-size:30px;'>预算总金额：  人 民 币 {$chineAmount}（￥{$amount}）    </td>";
+        $div .= "<td colspan='10' height='78' style='text-align:left;font-size:30px;'>预算总金额：  人 民 币(大写) <span style='padding-bottom:10px; border-bottom:1px solid #000'>{$chineAmount}（￥{$amount}）</span>    </td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
@@ -413,13 +413,13 @@ class Purchase extends Base
 
         $div .= "<tr>";
         $div .= "<td colspan='10' height='78' style='text-align:left;font-size:30px;'>
-        <p style='position:absolute;top:1'>项目经理审批：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
+        <p style='position:absolute;top:1'>项目部采购员：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
         </td>";
         $div .= "</tr>";
 
         $div .= "<tr>";
         $div .= "<td colspan='10' height='78' style='text-align:left;font-size:30px;'>
-        <p style='position:absolute;top:1'>采购部门执行结果：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
+        <p style='position:absolute;top:1'>项目总经理审批：</p><p style='position:absolute;right:10;padding-left:400'>{$nbsp}签字/日期：</p>
         </td>";
         $div .= "</tr>";
 

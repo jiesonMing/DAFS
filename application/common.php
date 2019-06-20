@@ -162,9 +162,9 @@ function num_to_rmb($num){
     }
     //将处理的汉字加上“整”
     if (empty($c)) {
-        $c = "零元整";
+        $c = "零元";// $c = "零元整";
     }else{
-        $c.= "整";
+        $c.= "";  // $c.= "整";
     }
 
     $str = preg_replace("/([\x{4e00}-\x{9fa5}])/u", "\\1 ", $c);
