@@ -38,7 +38,7 @@
     <script type="text/html" id="operateBar">
         <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看详情</a>
         <!-- <a class="layui-btn layui-btn-success layui-btn-xs" lay-event="uploadpdf"><i class="layui-icon layui-icon-upload"></i>上传扫描件</a> -->
-        <!-- <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a> -->
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
     </script>
 </div>
 <div class="show-add-data" style="display: none;padding: 10px">
@@ -120,8 +120,8 @@
                     $.ajax({
                         type:'delete',
                         dataType:'json',
-                        url: domain + '/purchase_del',
-                        data:{pid:data.id},
+                        url: domain + '/car_del',
+                        data:{id:data.id},
                         success:function(res){
                             if (res.code == 0) {
                                 obj.del();

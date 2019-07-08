@@ -34,6 +34,11 @@
             <a href="/car_add?carid={$carid}"><i class="layui-icon">&#xe608;</i> 创建</a>
         </button>
     </div>
+    <okToolbar>
+        <button class="layui-btn" id="export" style="margin-top:10px;">
+            <i class="iconfont icon-export"></i> 导出
+        </button>
+    </okToolbar>
 
     <table class="layui-table" id="car_data" lay-filter="car_data"></table>
     <h6 style="color:#FF5722">注：点击数据内容可编辑。</h6>
@@ -41,7 +46,7 @@
     <script type="text/html" id="operateBar">
         <!-- <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看</a> -->
         <!-- <a class="layui-btn layui-btn-success layui-btn-xs" lay-event="uploadpdf"><i class="layui-icon layui-icon-upload"></i>上传扫描件</a> -->
-        <!-- <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a> -->
+        <a class="layui-btn layui-btn-danger layui-btn-xs" id="delItem" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
     </script>
 
 </div>
@@ -54,10 +59,12 @@
         var laydate = layui.laydate;
         var $ = layui.$;
         // 请购单数据
-        table.render({
+        var ins1 = table.render({
             elem: '#car_data'
             ,url: domain + '/car_data' //数据接口
             ,page: true //开启分页
+            ,id:'car_data'
+            ,title:'车牌号:{$car_number}'+'车辆维修详情'
             ,cols: [[ //表头
             {field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
             ,{field: 'nianjian_time', title: '年检时间',edit:'text', sort: true}
@@ -70,9 +77,17 @@
             ,{field: 'next_insurance_time', title: '下次保险时间',edit:'text', sort: true}
             ,{field: 'remarks', title: '备注',edit:'text', sort: true}
             ,{field: 'addtime', title: '添加时间'}
-            // ,{title: '操作', fixed: 'right',align:'center', toolbar: '#operateBar'}
-            ]]
+            ,{title: '操作', fixed: 'right',align:'center', toolbar: '#operateBar'}
+            ]],
+            done: function (res, curr, count) {
+                exportData=res.data;
+            }
         });
+        
+        // 导出
+        $("#export").click(function(){
+	       	table.exportFile(ins1.config.id,exportData, 'xls');
+        })
 
         // 数据重载
         var tableReload = function(params={}) {
@@ -110,6 +125,28 @@
                     }
                 }
             });
+        });
+        
+        // 删除
+        table.on('tool(car_data)', function(obj){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+                $.ajax({
+                    type:'delete',
+                    dataType:'json',
+                    url: domain + '/car_detail_del',
+                    data:{id:obj.data.id},
+                    success:function(res){
+                        if (res.code == 0) {
+                            table.reload('car_data',{
+                                data : {}
+                            });
+                        }
+                    }
+                });
+            });
+
         });
 
         $('.demoTable #search').on('click', function(){

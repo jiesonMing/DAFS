@@ -72,6 +72,8 @@ Route::put('car_edit','index/car/car_edit');
 Route::get('car_add','index/car/car_add_view');
 Route::post('car_add','index/car/car_add');
 Route::post('car_add_data','index/car/car_add_data');
+Route::delete('car_del','index/car/car_del');
+Route::delete('car_detail_del','index/car/car_detail_del');
 
 // 车辆用油情况
 Route::get('caroil','index/car/caroil_view');
@@ -79,3 +81,4 @@ Route::get('caroil_data','index/car/caroil_data');
 Route::get('caroil_add','index/car/caroil_add_view');
 Route::post('caroil_add_data','index/car/caroil_add_data');
 Route::put('caroil_edit','index/car/caroil_edit');
+Route::delete('caroil_del','index/car/caroil_del');

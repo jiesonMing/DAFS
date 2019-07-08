@@ -21,10 +21,7 @@
         <button class="layui-btn" data-type="reload" id="search">搜索</button>
 
         <div class="layui-inline" style="padding-left: 20px ">
-            <input type="text" class="layui-input startTime" placeholder="开始时间">
-        </div>
-        <div class="layui-inline">
-            <input type="text" class="layui-input endTime" placeholder="结束时间">
+            <input type="text" class="layui-input startTime" placeholder="月份">
         </div>
         
         <button class="layui-btn" style="float: right;">
@@ -32,13 +29,19 @@
         </button>
     </div>
 
+    <okToolbar>
+        <button class="layui-btn" id="export" style="margin-top:10px;">
+            <i class="iconfont icon-export"></i> 导出
+        </button>
+    </okToolbar>
+
     <table class="layui-table" id="caroil_data" lay-filter="caroil_data"></table>
     <h6 style="color:#FF5722">注：点击数据内容可编辑。</h6>
 
     <script type="text/html" id="operateBar">
         <!-- <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>查看</a> -->
         <!-- <a class="layui-btn layui-btn-success layui-btn-xs" lay-event="uploadpdf"><i class="layui-icon layui-icon-upload"></i>上传扫描件</a> -->
-        <!-- <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a> -->
+        <a class="layui-btn layui-btn-danger layui-btn-xs" id="delItem" lay-event="del"><i class="layui-icon layui-icon-delete"></i></a>
     </script>
 
 </div>
@@ -50,23 +53,37 @@
         var table = layui.table;
         var laydate = layui.laydate;
         var $ = layui.$;
+
+        // 月份
+        var date = new Date;
+        var year = date.getFullYear(); 
+        var month = date.getMonth()+1;
+        var month = $('#searchValue').val() != '' ?$('#searchValue').val():year+'年'+month+'月';
         // 请购单数据
-        table.render({
+        var ins1 = table.render({
             elem: '#caroil_data'
             ,url: domain + '/caroil_data' //数据接口
             ,page: true //开启分页
+            ,title: month+'用油明细表'
             ,cols: [[ //表头
             {field:  'index', title: '序号', width:80, sort: true, fixed: 'left'}
             ,{field: 'caroil_number', title: '油卡号', edit: 'text'}
             ,{field: 'car_number', title: '车牌号',edit: 'text', sort: true}
-            ,{field: 'user', title: '使用人',edit: 'text'} 
-            ,{field: 'oil_add_time', title: '加油时间',edit:'text', sort: true}
-            ,{field: 'oil_amount', title: '加油金额',edit:'text', sort: true}
-            ,{field: 'amount', title: '总金额', sort: true}
+            ,{field: 'user', title: '使用区域',edit: 'text'} 
+            ,{field: 'oil_add_time', title: '时间(月份)',edit:'text', sort: true}
+            ,{field: 'oil_amount', title: '用油总金额',edit:'text', sort: true}
             ,{field: 'addtime', title: '添加时间'}
-            // ,{title: '操作', fixed: 'right',align:'center', toolbar: '#operateBar'}
-            ]]
+            ,{title: '操作', fixed: 'right',align:'center', toolbar: '#operateBar'}
+            ]],
+            done: function (res, curr, count) {
+                exportData=res.data;
+            }
         });
+
+        // 导出
+        $("#export").click(function(){
+	       	table.exportFile(ins1.config.id,exportData, 'xls');
+        })
 
         // 数据重载
         var tableReload = function(params={}) {
@@ -106,6 +123,28 @@
             });
         });
 
+        // 删除
+        table.on('tool(caroil_data)', function(obj){
+            layer.confirm('真的删除行么', function(index){
+                obj.del();
+                layer.close(index);
+                $.ajax({
+                    type:'delete',
+                    dataType:'json',
+                    url: domain + '/caroil_del_data',
+                    data:{id:obj.data.id},
+                    success:function(res){
+                        if (res.code == 0) {
+                            table.reload('caroil_data',{
+                                data : {}
+                            });
+                        }
+                    }
+                });
+            });
+
+        });
+
         $('.demoTable #search').on('click', function(){
             var search = $('#searchValue').val();
             tableReload({'search': search});
@@ -121,7 +160,7 @@
         // 时间
         laydate.render({
             elem: '.startTime', //指定元素
-            type: 'datetime',
+            type: 'month',
             done: function(value, date, endDate){
                 tableReload({'startTime': value});
             }

@@ -180,6 +180,37 @@ class Car extends Base
         }
     }
 
+    // 车辆删除
+    public function car_del()
+    {
+        Db::startTrans();
+        try {
+            Db::name('car_number')->where('id',  $this->datas['id'])->delete();
+            Db::name('car_maintenance')->where('car_id',  $this->datas['id'])->delete();
+
+            Db::commit();
+            return ajaxReturn(0, 'success');
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
+    }
+
+    // 车辆维修详情删除
+    public function car_detail_del()
+    {
+        Db::startTrans();
+        try {
+            Db::name('car_maintenance')->where('id',  $this->datas['id'])->delete();
+            
+            Db::commit();
+            return ajaxReturn(0, 'success');
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
+    }
+
     // 车辆用油情况view
     public function caroil_view()
     {
@@ -264,6 +295,21 @@ class Car extends Base
         try {
             Db::name('car_oil')->where('id', $this->datas['id'])->update($this->datas);
 
+            Db::commit();
+            return ajaxReturn(0, 'success');
+        } catch (Exception $e) {
+            Db::rollback();
+            return ajaxReturn(-1, $e->getMessage());
+        }
+    }
+
+    // 车辆用油删除
+    public function caroil_del_data()
+    {
+        Db::startTrans();
+        try {
+            Db::name('car_oil')->where('id',  $this->datas['id'])->delete();
+            
             Db::commit();
             return ajaxReturn(0, 'success');
         } catch (Exception $e) {

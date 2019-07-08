@@ -32,23 +32,23 @@
             </div>
 
             <div class="layui-form-item">
-                <label class="layui-form-label"><i class="red">*</i>使用人：</label>
+                <label class="layui-form-label"><i class="red">*</i>使用区域：</label>
                 <div class="layui-input-block">
-                <input type="text" name="user" lay-verify="required" autocomplete="off" placeholder="使用人" class="layui-input car_time">
+                <input type="text" name="user" lay-verify="required" autocomplete="off" placeholder="使用区域" class="layui-input car_time">
                 </div>
             </div>
             
             <div class="layui-form-item">
-                <label class="layui-form-label"><i class="red">*</i>加油时间：</label>
+                <label class="layui-form-label"><i class="red">*</i>时间(月份)：</label>
                 <div class="layui-input-block">
-                    <input type="tel" name="oil_add_time" lay-verify="required" autocomplete="off" placeholder="加油时间" class="layui-input car_add_time">
+                    <input type="tel" name="oil_add_time" lay-verify="required" autocomplete="off" placeholder="时间(月份)" class="layui-input car_add_time">
                 </div>
             </div>
 
             <div class="layui-form-item">
-                <label class="layui-form-label"><i class="red">*</i>加油金额：</label>
+                <label class="layui-form-label"><i class="red">*</i>用油总金额：</label>
                 <div class="layui-input-block">
-                <input type="tel" name="oil_amount" lay-verify="required|number" autocomplete="off" placeholder="加油金额" class="layui-input">
+                <input type="tel" name="oil_amount" lay-verify="required|number" autocomplete="off" placeholder="用油总金额" class="layui-input">
                 </div>
             </div>
 
@@ -97,10 +97,10 @@
     // 时间
     laydate.render({
         elem: '.car_add_time', //指定元素
-        type: 'date',
-        done: function(value, date, endDate){
-            tableReload({'car_add_time': value});
-        }
+        type: 'month',
+        // done: function(value, date, endDate){
+        //     tableReload({'car_add_time': value});
+        // }
     });
     
   });
