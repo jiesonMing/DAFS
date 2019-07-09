@@ -225,11 +225,9 @@ class Car extends Base
             $where.=" and concat(car_number,caroil_number,user) like '%{$this->datas['search']}%'";
         }
         if (isset($this->datas['startTime']) && !empty($this->datas['startTime'])) {
-            $where.=" and addtime >=".strtotime($this->datas['startTime']);
+            $where.=" and oil_add_time like '%".$this->datas['startTime']."%'";
         }
-        if (isset($this->datas['endTime']) && !empty($this->datas['endTime'])) {
-            $where.=" and addtime <=".strtotime($this->datas['endTime']);
-        }
+
         $page = isset($this->datas['page'])?$this->datas['page']:1;
         $limit = isset($this->datas['limit'])?$this->datas['limit']:Config::get('paginate.list_rows');
         $startLimit = ($page-1)*$limit;
