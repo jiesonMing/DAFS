@@ -50,6 +50,7 @@
                     ,{field:'amount', title: '预算总价(元)',width:120, sort: true,totalRow: true, edit:'text'}
                     ,{field:'use', title: '用途',minWidth:150, edit:'text'}
                     ,{field:'needtime', width:137, title: '需求日期', sort: true, edit:'text'}
+                    ,{field:'needbacktime', width:137, title: '要求回货时间', sort: true, edit:'text'}
                     ,{field:'remarks', title: '备注',minWidth:150, edit:'text'}
                 ],
             ]
@@ -102,7 +103,7 @@
         // 添加一行数据
         $("#addNew").click(function(){
             var data = table.cache.purchase_requisition_items_data
-            data.push({'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','remarks':''});
+            data.push({'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','needbacktime':'','remarks':''});
             var preId = {$preId};
             $.ajax({
                 type:'post',

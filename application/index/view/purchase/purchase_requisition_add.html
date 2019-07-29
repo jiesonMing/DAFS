@@ -181,7 +181,7 @@
     });
 
     var emptyData = [
-      {'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','remarks':''}
+      {'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','needbacktime':'','remarks':''}
     ]
 
     // 表格
@@ -198,6 +198,7 @@
         ,{field:'amount', title: '预算总价(元)',width:150,totalRow: true, edit:'text'}
         ,{field:'use', title: '用途',width:200, edit:'text'}
         ,{field:'needtime', width:100, title: '需求日期', edit:'text'}
+        ,{field:'needbacktime', width:100, title: '要求回货时间', edit:'text'}
         ,{field:'remarks', title: '备注', edit:'text',width:'25%'}
         ,{title: '操作', fixed: 'right', align:'center', toolbar: '#operateBar'}
       ]]
@@ -240,7 +241,7 @@
     // 添加一行数据
     $('#addTr').on('click',function(){
       var data = table.cache.itemsTable;
-      data.push({'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','remarks':''})
+      data.push({'name':'','spec':'','unit':'','qty':'','price':'','amount':'','use':'','needtime':'','needbacktime':'','remarks':''})
       table.reload('itemsTable',{
           data : data
       });
